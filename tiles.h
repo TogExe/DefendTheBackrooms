@@ -232,23 +232,24 @@ const char tile_15_flicker[8][8] = {
     {'f','f','f','f','f','f','f','f'},
 };
 
-const char* tiles[16] = {
-    (const char*)tile_0_open,
-    (const char*)tile_1_wall_top,
-    (const char*)tile_2_wall_bottom,
-    (const char*)tile_3_wall_left,
-    (const char*)tile_4_wall_right,
-    (const char*)tile_5_cross,
-    (const char*)tile_6_dead_end,
-    (const char*)tile_7_corner_tl,
-    (const char*)tile_8_corner_tr,
-    (const char*)tile_9_corner_bl,
-    (const char*)tile_10_corner_br,
-    (const char*)tile_11_doorway_top,
-    (const char*)tile_12_lightless,
-    (const char*)tile_13_void,
-    (const char*)tile_14_pillar,
-    (const char*)tile_15_flicker
+#define TILES_COUNT 16
+const char** tiles[16] = {
+    (const char**)tile_0_open,
+    (const char**)tile_1_wall_top,
+    (const char**)tile_2_wall_bottom,
+    (const char**)tile_3_wall_left,
+    (const char**)tile_4_wall_right,
+    (const char**)tile_5_cross,
+    (const char**)tile_6_dead_end,
+    (const char**)tile_7_corner_tl,
+    (const char**)tile_8_corner_tr,
+    (const char**)tile_9_corner_bl,
+    (const char**)tile_10_corner_br,
+    (const char**)tile_11_doorway_top,
+    (const char**)tile_12_lightless,
+    (const char**)tile_13_void,
+    (const char**)tile_14_pillar,
+    (const char**)tile_15_flicker
 };
 
 
