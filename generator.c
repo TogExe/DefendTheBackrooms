@@ -1,9 +1,10 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "generator.h"
 #include "tiles.h"
-// first char constraint:
 
+// first char constraint:
 const char constraints[6][6] = {
     //        f   w   c   p   l   d
     /*f*/  {1,  1,  1,  1,  1,  1},
@@ -43,7 +44,7 @@ int isTileCompatible(char **a, char **b,char direction) {
             for(int i = 0; i < 8; i++) {
                 if(isPartCompatible(a[7][i], b[0][i])) {
                     rep++;
-                } 
+                }
             }return rep;
         case 1://compatible above
             for(int i = 0; i < 8; i++) {
@@ -67,3 +68,30 @@ int isTileCompatible(char **a, char **b,char direction) {
     }
 }
 
+#include <time.h>
+
+#define MAX_OPTIONS 4
+
+Cell ** init_minimap(int size) {
+    srand(time(NULL));
+    static Cell minimap[size][size];
+    for(int x = 0; x < size; x++) {
+        for(int y = 0; y < size; y++) {
+            Cell c;
+            c.option_count = 0;
+            c.collapsed=0;
+            for(int z = 0; z < MAX_OPTIONS; z++) {
+                c.options[z]= rand() % TILES_COUNT;
+                c.option_count++;
+            }
+        }   
+    }
+    return minimap;
+}
+void fix_minimap(Cell **minimap,int size) {
+    for(int x = 0; x < size; x++) {
+        for(int y = 0; y < size; y++) {
+        }
+    }
+    return;
+}
