@@ -1,19 +1,19 @@
 //
 // Created by TogExe on 05/04/2025.
 //
-
 #ifndef GENERATOR_H
 #define GENERATOR_H
 
-#define MAX_OPTIONS 4
-
 typedef struct {
-    int options[MAX_OPTIONS];
-    int option_count;
-    int collapsed; // 1 if a tile has been chosen
-} Cell;
+    int opt_count;
+    char *** opt;
+    char ** choice;
+} tile;
 
-char* build_amap_please_i_want_one_very_very_much(int size);
+#define TILE_SIZE 3
+#define MAP_SIZE 10
 
-
-#endif //GENERATOR_H
+void initialize_map(tile map[MAP_SIZE][MAP_SIZE], int size);
+void free_map(tile map[MAP_SIZE][MAP_SIZE], int size);
+void generation(tile map[MAP_SIZE][MAP_SIZE], int size);
+#endif // GENERATOR_H
