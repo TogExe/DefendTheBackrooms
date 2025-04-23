@@ -1,26 +1,28 @@
+# Makefile
+OBJS    = main.o generator.o
+SOURCE  = main.c generator.c
+HEADER  = generator.h
+OUT     = a.out
+CC      = gcc
 
-OBJS	= main.o generator.o
-SOURCE	= main.c generator.c
-HEADER	= generator.h
-OUT	= a.out
-FLAGS	= -g -c -Wall
-LFLAGS	= 
-CC	= gcc
+# Compilation and Linker flags
+CFLAGS  = -g -Wall `sdl2-config --cflags`
+LFLAGS  = `sdl2-config --libs`
 
-all:	a.out
+all: $(OUT)
 
-a.out: $(OBJS)
+$(OUT): $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
 main.o: main.c
-	$(CC) $(FLAGS) main.c 
+	$(CC) $(CFLAGS) -c main.c
 
 generator.o: generator.c
-	$(CC) $(FLAGS) generator.c 
+	$(CC) $(CFLAGS) -c generator.c
 
 clean:
 	rm -f $(OBJS) $(OUT)
 
 # Test target
-test: $(TARGET)
-	./$(TARGET)
+test: $(OUT)
+	./$(OUT)
