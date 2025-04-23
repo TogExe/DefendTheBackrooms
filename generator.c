@@ -282,7 +282,7 @@ char **generate_world() {
     return NULL;
 }
 
-/*int main() {
+int main() {
     int count = MAP_SIZE / TILE_SIZE;
     tile **chunks = generate_chunks(count);
     // Free allocated memory
@@ -292,4 +292,4 @@ char **generate_world() {
     }
     free(chunks);
     return 0;
-}*/
+}
