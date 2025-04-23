@@ -20,8 +20,5 @@ jobs:
     - name: Build
       run: make
 
-    - name: Set execute permissions
-      run: chmod +x my_program
-
     - name: Run tests
       run: make test
