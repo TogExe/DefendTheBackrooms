@@ -20,3 +20,6 @@ generator.o: generator.c
 
 clean:
 	rm -f $(OBJS) $(OUT)
+
+test: my_program
+	./my_program
