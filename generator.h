@@ -1,14 +1,14 @@
-//
-// Created by TogExe on 05/04/2025.
-//
 #ifndef GENERATOR_H
 #define GENERATOR_H
 
+#define MAX_SIDE  100
+#define MAX_TILE_TYPES 26
+
 typedef struct {
-    int status;
-    char opt[13];
-    char choice;
-} tile;
+    int count;
+    int values[MAX_TILE_TYPES];
+} Constraint;
 
+void generate_grid_with_constraints(int side, char grid[MAX_SIDE][MAX_SIDE], Constraint constraints[], int constraint_count);
 
-#endif // GENERATOR_H
+#endif
