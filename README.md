@@ -14,7 +14,7 @@ Todo
  - [-] generating a world.
  - [-] being able to move an entity.
  - [-] making a game window.
-  [-] displayig text.
+ [-] displayig text.
  [-] interactible components.
   [ ] controlling multiple entities moving trough the world.
  - [ ] reward for killing an enemy.
