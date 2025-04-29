@@ -117,5 +117,3 @@ int main() {
 
     return 0;
 }
-
-// can you make an sdl interface that displays the tiles  with different colors based on the type
