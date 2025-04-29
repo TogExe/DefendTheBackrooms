@@ -10,6 +10,7 @@ we use a lot of sdl ill add the link later
 
 ## To do list
 
+Todo
  - [-] generating a world.
  - [-] being able to move an entity.
  - [-] making a game window.
