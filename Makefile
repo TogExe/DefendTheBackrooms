@@ -1,28 +1,38 @@
-# Makefile
-OBJS    = main.o generator.o
-SOURCE  = main.c generator.c
-HEADER  = generator.h
-OUT     = a.out
-CC      = gcc
+# Compiler
+CC = gcc
 
-# Compilation and Linker flags
-CFLAGS  = -g -Wall `sdl2-config --cflags`
-LFLAGS  = `sdl2-config --libs`
+# Compiler flags
+CFLAGS = -Wall -Wextra -std=c99 `sdl2-config --cflags`
 
-all: $(OUT)
+# Linker flags for SDL2
+LDFLAGS = `sdl2-config --libs`
 
-$(OUT): $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+# Source files
+SRCS = constraintBuilder.c generator.c main.c pathfinder.c
 
-main.o: main.c
-	$(CC) $(CFLAGS) -c main.c
+# Object files
+OBJS = $(SRCS:.c=.o)
 
-generator.o: generator.c
-	$(CC) $(CFLAGS) -c generator.c
+# Header files
+HDRS = constraintBuilder.h generator.h pathfinder.h
 
+# Executable name
+TARGET = my_program
+
+# Default target
+all: $(TARGET)
+
+# Linking the object files to create the executable
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+# Rule to create object files from source files
+%.o: %.c $(HDRS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Clean up build artifacts
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -f $(OBJS) $(TARGET)
 
-# Test target
-test: $(OUT)
-	./$(OUT)
+# Phony targets
+.PHONY: all clean
