@@ -8,6 +8,12 @@ we are trying to develop our game for linux we might later add some more platfor
 ### libraries used 
 we use a lot of sdl ill add the link later 
 
-## To do list :
-> We have a lot to do such as :
- [ ] - a
+## To do list
+
+ - [ ] generating a world
+ 
+
+
+
+
+
