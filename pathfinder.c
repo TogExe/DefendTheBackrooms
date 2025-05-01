@@ -4,8 +4,6 @@
 #include <math.h>
 #include <stdio.h>
 
-// a path finding solution based on the manhatan algorythm
-
 typedef struct {
     int x, y;
 } Node;
@@ -33,7 +31,7 @@ static int cost(char tile, char *avoid, int avoid_count, char *prefer, int prefe
 }
 
 int generate_organic_path(char grid[MAX_SIDE][MAX_SIDE], int side, char *avoid, int avoid_count, char *prefer, int prefer_count) {
-    Node start = {0, 0}, end = {side - 1, side - 1};
+    Node start = {0, 0}, end = {side-1,side-1};
 
     // Dynamically allocate memory for came_from, g_score, and open
     int (*came_from)[side][2] = malloc(sizeof(int) * side * side * 2);
