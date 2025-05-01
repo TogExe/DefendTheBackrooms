@@ -17,8 +17,9 @@ typedef enum {
     WIDGET_ROOT
 } WidgetType;
 
-typedef struct Box Box;
+
 typedef struct Widget Widget;
+
 bool mouse_in_rect(const SDL_Rect* rect);
 bool mousedown();
 
@@ -32,7 +33,6 @@ typedef struct Widget {
     bool *clicked;
     bool *selected;
     WidgetType type;
-    Box *box;
 } Widget;
 
 typedef struct Complement {
@@ -46,7 +46,6 @@ typedef struct Text {
     SDL_Color color;
     TTF_Font *font;
     float size_multiplier;
-    Box * box;
 } Text;
 
 // Box widget
@@ -273,7 +272,7 @@ Collider* create_collider_for(Widget *target_widget) {
 
 // === Mainloop for testing ===
 
-/*int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
     IMG_Init(IMG_INIT_PNG);
@@ -342,4 +341,4 @@ Collider* create_collider_for(Widget *target_widget) {
     IMG_Quit();
     SDL_Quit();
     return 0;
-}*/
+}
