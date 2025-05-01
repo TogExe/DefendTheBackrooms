@@ -9,8 +9,8 @@
 
 #include <time.h>
 
-#define MAP_SIZE 70
-#define TILE_SIZE 10
+#define MAP_SIZE 35
+#define TILE_SIZE 20
 #define ENEMY_SIZE 5
 #define MAX_CLICKS 1000
 
@@ -62,61 +62,69 @@ void draw_map(SDL_Renderer *renderer, int map[MAP_SIZE][MAP_SIZE]) {
 
 
 
-void draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y, int map[MAP_SIZE][MAP_SIZE]) {
-    // Convertir coordonnées pixels → indices de case
+// Renvoie 1 si une position a été trouvée et placée dans out_x/out_y
+int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y, int map[MAP_SIZE][MAP_SIZE],
+                    int *out_x, int *out_y, int click_positions[MAX_CLICKS][2], int click_count) {
     int tile_x = mouse_x / TILE_SIZE;
     int tile_y = mouse_y / TILE_SIZE;
 
-    // Si on clique sur un chemin (valeur 1), chercher une case sol (0) autour
-    if (tile_x < 0 || tile_x >= MAP_SIZE || tile_y < 0 || tile_y >= MAP_SIZE)
-    return;
-    
-    if (map[tile_x][tile_y] == 1) {
+    if (tile_x < 0 || tile_x >= MAP_SIZE || tile_y < 0 || tile_y >= MAP_SIZE) {
+        return 0;
+    }
+
+    if (map[tile_x][tile_y] != 0 && map[tile_x][tile_y] != 1) {
+    return 0;
+
+    }
+
     int best_x = -1, best_y = -1;
     double min_dist = 1e9;
 
-        for (int radius = 1; radius <= 3; radius++) {
-            for (int dx = -radius; dx <= radius; dx++) {
-                for (int dy = -radius; dy <= radius; dy++) {
+    for (int radius = 1; radius <= 3; radius++) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
                 int nx = tile_x + dx;
                 int ny = tile_y + dy;
 
                 if (nx >= 0 && nx < MAP_SIZE && ny >= 0 && ny < MAP_SIZE && map[nx][ny] == 0) {
-                    // Coordonnées pixels du centre de cette case
-                    int px = nx * TILE_SIZE + TILE_SIZE / 2;
-                    int py = ny * TILE_SIZE + TILE_SIZE / 2;
+                    // Vérifier qu'aucune tourelle n'est déjà placée ici
+                    int pixel_x = nx * TILE_SIZE;
+                    int pixel_y = ny * TILE_SIZE;
+                    int already_placed = 0;
+                    for (int i = 0; i < click_count; i++) {
+                        int cx = click_positions[i][0] / TILE_SIZE * TILE_SIZE;
+                        int cy = click_positions[i][1] / TILE_SIZE * TILE_SIZE;
+                        if (cx == pixel_x && cy == pixel_y) {
+                            already_placed = 1;
+                            break;
+                        }
+                    }
 
-                    // Distance au clic (en pixels)
-                    double dist = sqrt((mouse_x - px) * (mouse_x - px) + (mouse_y - py) * (mouse_y - py));
-
-                    if (dist < min_dist) {
-                        min_dist = dist;
-                        best_x = nx;
-                        best_y = ny;
+                    if (!already_placed) {
+                        int px = nx * TILE_SIZE + TILE_SIZE / 2;
+                        int py = ny * TILE_SIZE + TILE_SIZE / 2;
+                        double dist = sqrt((mouse_x - px) * (mouse_x - px) + (mouse_y - py) * (mouse_y - py));
+                        if (dist < min_dist) {
+                            min_dist = dist;
+                            best_x = nx;
+                            best_y = ny;
+                        }
                     }
                 }
             }
         }
     }
 
-    // Si une case libre trouvée, l'utiliser
     if (best_x != -1 && best_y != -1) {
-        tile_x = best_x;
-        tile_y = best_y;
-    } else {
-        return; // Rien trouvé, ne rien dessiner
+        *out_x = best_x * TILE_SIZE;
+        *out_y = best_y * TILE_SIZE;
+        return 1;
     }
+
+    return 0;
 }
 
 
-    // Aligner parfaitement sur une case de la grille (multiples de TILE_SIZE)
-    int aligned_x = tile_x * TILE_SIZE;
-    int aligned_y = tile_y * TILE_SIZE;
-
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Rouge
-    SDL_Rect rect = { aligned_x, aligned_y, TILE_SIZE, TILE_SIZE };
-    SDL_RenderFillRect(renderer, &rect);
-}
 
 void affiche_image(SDL_Renderer *renderer, const char *image_path, int x, int y) {
     SDL_Surface *surface = IMG_Load(image_path);
@@ -316,21 +324,21 @@ while (running) {
         }
         
             //•••••••••••••••••••••••••••••••••••••clic souris•••••••••••••••••••••••••••••••••••••
-    // Clic de souris
+
         if (event.type == SDL_MOUSEBUTTONDOWN) {
-          int x, y;
-          SDL_GetMouseState(&x, &y);
+            int x, y;
+            SDL_GetMouseState(&x, &y);
+            printf("Clic détecté en (%d, %d)\n", x, y);
 
-          printf("Clic détecté en (%d, %d)\n", x, y);
-          
-
-            if (click_count < MAX_CLICKS) {
-              click_positions[click_count][0] = x;
-              click_positions[click_count][1] = y;
-              click_count++;
+            int final_x, final_y;
+            if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, map, &final_x, &final_y, click_positions, click_count)) {
+                click_positions[click_count][0] = final_x;
+                click_positions[click_count][1] = final_y;
+                click_count++;
             }
-            
-      }
+
+        }
+
 }
     
     
@@ -349,11 +357,11 @@ while (running) {
     
     //....................................tourelle au clic............................
     for (int i = 0; i < click_count; i++) {
-    int x = click_positions[i][0] - 16;
-    int y = click_positions[i][1] - 16;
-    SDL_Rect dst = { x, y, 32, 32 };
-    SDL_RenderCopy(renderer, icon_texture, NULL, &dst);
-  }
+        int x = click_positions[i][0];
+        int y = click_positions[i][1];
+        SDL_Rect dst = { x, y, TILE_SIZE, TILE_SIZE };
+        SDL_RenderCopy(renderer, icon_texture, NULL, &dst);
+    }
     
     draw_hud(renderer, font, vie, argent);
 
@@ -367,7 +375,7 @@ while (running) {
     SDL_Rect enemy_rect = { enemy_x * TILE_SIZE, enemy_y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
     SDL_RenderFillRect(renderer, &enemy_rect);
 
-// Déplacer l'ennemi petit à petit
+// •••••••••••••••••••••••••••••••••••Déplacement ennemi•••••••••••••••••••••••••••••••••••••••••
 static Uint32 last_move_time = 0;
  Uint32 now = SDL_GetTicks();
 
