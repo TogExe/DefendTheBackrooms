@@ -69,7 +69,9 @@ typedef struct Image {
 // GUI structure
 typedef struct Gui {
     Widget *widgets[MAX_WIDGETS];  // Array of widgets
-    int widget_count;              // The number of widgets
+    int widget_count;// The number of widgets
+    int w;// The screen width to set a corner 
+    int h;// The screen height
 } Gui;
 
 // Function declarations
