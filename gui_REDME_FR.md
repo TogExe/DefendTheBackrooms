@@ -213,4 +213,4 @@ while (running) {
 
 ---
 
-*merci de la lecture et bonne chance*
+*merci de la lecture et bonne chance :)*
