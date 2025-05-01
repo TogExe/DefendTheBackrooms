@@ -181,7 +181,7 @@ while (running) {
 
 ---
 
-## 🛠 Fonctions Utiles
+## 🛠 Fonctions Utiles (*utilisées par les widgets*)
 
 | Fonction                | Description                                  |
 |-------------------------|----------------------------------------------|
