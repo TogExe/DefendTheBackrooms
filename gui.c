@@ -33,9 +33,11 @@ void draw_image(SDL_Renderer *renderer, Image *image) {
     const SDL_Rect dst = image->widget.rect;
     SDL_RenderCopy(renderer, image->texture, NULL, &dst);
 }
-
 void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer){
     for (int i = 0; i < gui->widget_count; i++) {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+
+        SDL_RenderFillRect(renderer, &(SDL_Rect){gui->w-1,gui->h-1,1,1});
         Widget *w = gui->widgets[i];
         if (!w) continue;
 
@@ -215,7 +217,7 @@ Collider* create_collider_for(Widget *target_widget) {
 
 // === Mainloop for testing ===
 
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
     IMG_Init(IMG_INIT_PNG);
@@ -241,7 +243,7 @@ int main(int argc, char *argv[]) {
     background->widget.personal_procedure = change_color_on_hover;
     background->widget.color = (SDL_Color){0, 0, 255, 255};
     background->is_visible = true;
-    background->bounds = background->widget.rect;*/
+    background->bounds = background->widget.rect;
     Box * background = make_box_widget((SDL_Rect){100,10,40,30},(SDL_Color){100,29,179,255},true,change_color_on_hover);
     gui.widgets[gui.widget_count++] = (Widget *)background;
 
@@ -287,3 +289,4 @@ int main(int argc, char *argv[]) {
     SDL_Quit();
     return 0;
 }
+*/
