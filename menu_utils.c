@@ -327,7 +327,6 @@ int main(int argc, char *argv[]) {
     // Main loop
     bool running = true;
     SDL_Event e;
-
     gui_init(&gui);
 
     while (running) {
