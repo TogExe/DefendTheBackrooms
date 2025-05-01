@@ -38,6 +38,8 @@ The `Gui` struct holds all widgets:
 
 ```c
 Gui gui = {.widget_count = 0};
+gui.w = WIDTH// replace by what you want (int)
+gui.h = HEIGHT// same here
 ```
 
 ---
