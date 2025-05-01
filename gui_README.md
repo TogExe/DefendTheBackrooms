@@ -1,24 +1,26 @@
-# 🖼️ Simple SDL GUI Framework
 
-This is a lightweight GUI system built with **SDL2**, **SDL_ttf**, and **SDL_image** designed to let you easily create **interactive widgets** like text, boxes, and (soon) images in your C applications.
+# 🧱 Simple GUI Framework for SDL2
 
----
-
-## 📦 Features
-
-- ✅ Easy setup and integration with SDL
-- 🧱 Widgets: Boxes, Text, Colliders, Images
-- 🎯 Hover and click interactivity
-- 🔧 Custom behavior using widget callbacks
-- 🏗️ Built to be extended and lightweight
+This is a lightweight C framework to create **interactive GUI widgets** using **SDL2**, **SDL_ttf**, and **SDL_image**.  
+It supports basic interface components like **text**, **colored boxes**, **images**, and **interactivity (hover/click)**.
 
 ---
 
-## 🚀 Getting Started
+## 🔧 Features
 
-### 1. Set up SDL
+- 🚀 Plug-and-play integration with any SDL2 project
+- 🧱 Ready-to-use widgets: `Text`, `Box`, `Image`, `Collider`
+- 🖱️ Hover & click detection via colliders
+- 🎯 Custom behaviors via **personal procedures**
+- 🧠 Shared `Context` object for global state interaction
 
-You need an `SDL_Renderer` and optionally a `TTF_Font` for text widgets:
+---
+
+## 📦 Basic Setup
+
+### 1. Initialize SDL & TTF
+
+For text widgets, initialize SDL_ttf and load a font:
 
 ```c
 TTF_Font *font = TTF_OpenFont("assets/font.TTF", 24);
@@ -30,9 +32,9 @@ if (!font) {
 
 ---
 
-### 2. Create the GUI
+### 2. Create a GUI container
 
-A `Gui` holds all your widgets:
+The `Gui` struct holds all widgets:
 
 ```c
 Gui gui = {.widget_count = 0};
@@ -42,14 +44,14 @@ Gui gui = {.widget_count = 0};
 
 ### 3. Add Widgets
 
-#### 🟥 Box Widget
+#### 🟦 Box Widget
 
 ```c
 Box *box = make_box_widget(
-    (SDL_Rect){100, 50, 100, 40},
-    (SDL_Color){200, 50, 100, 255},
+    (SDL_Rect){100, 50, 120, 60},
+    (SDL_Color){0, 120, 200, 255},
     true,
-    change_color_on_hover
+    change_color_on_hover  // personal procedure
 );
 gui.widgets[gui.widget_count++] = (Widget *)box;
 ```
@@ -58,8 +60,8 @@ gui.widgets[gui.widget_count++] = (Widget *)box;
 
 ```c
 Text *label = make_text_widget(
-    (SDL_Rect){50, 150, 0, 0},
-    "Click Me!",
+    (SDL_Rect){80, 140, 0, 0},
+    "Click me!",
     (SDL_Color){255, 255, 255, 255},
     font,
     change_size_on_click
@@ -67,9 +69,9 @@ Text *label = make_text_widget(
 gui.widgets[gui.widget_count++] = (Widget *)label;
 ```
 
-#### ✋ Collider Widget
+#### 🖱️ Collider Widget
 
-Colliders enable interaction (hovering and clicking):
+Attach interactivity to any widget using a collider:
 
 ```c
 Collider *collider = create_collider_for((Widget *)label);
@@ -78,122 +80,140 @@ gui.widgets[gui.widget_count++] = (Widget *)collider;
 
 ---
 
-### 4. Main Loop Functions
+## 🔁 Main Loop Integration
 
-In your main game loop, call these every frame:
+In your main render/update loop:
 
 ```c
-interact_gui(&gui);                  // Detect interaction
-update_gui(&gui, &context);          // Update widget behavior
-draw_gui_visible_components(&gui, renderer); // Render widgets
+interact_gui(&gui);                       // Update hover/click state
+update_gui(&gui, &context);              // Run personal procedures
+draw_gui_visible_components(&gui, renderer);  // Draw GUI
 ```
 
-Call once at the beginning:
+Once at the beginning:
 
 ```c
-gui_init(&gui);                      // Set origin/default colors
+gui_init(&gui);  // Stores original colors and positions
 ```
 
 ---
 
-## 🧠 Custom Behavior
+## 🧠 Personal Procedures & Context
 
-Each widget can have a custom function:
+A **personal procedure** is a custom function tied to a widget, run on click/interaction.
+
+Example: Changing color on hover and click:
 
 ```c
 void change_color_on_hover(Widget *self, const Context *context) {
     if (*self->selected) {
-        self->color = *self->clicked
-            ? (SDL_Color){100, 100, 50, 255}
-            : (SDL_Color){170, 170, 50, 255};
+        if (*self->clicked) {
+            self->color = (SDL_Color){100, 100, 50, 255};
+        } else {
+            self->color = (SDL_Color){170, 170, 50, 255};
+        }
     } else {
         self->color = self->default_color;
     }
 }
 ```
 
-You can assign it when creating a widget.
-
----
-
-## 🖼️ Image Widget (Preview)
-
-Image support is being added:
+You can also use the `Context` to interact with your app’s global state:
 
 ```c
-Image *img = malloc(sizeof(Image));
-img->widget.rect = (SDL_Rect){300, 100, 64, 64};
-img->widget.type = WIDGET_IMAGE;
-img->texture = IMG_LoadTexture(renderer, "assets/icon.png");
-gui.widgets[gui.widget_count++] = (Widget *)img;
+typedef struct Context {
+    int *score;
+    bool *game_over;
+    // Any other global state...
+} Context;
+
+void update_score_on_click(Widget *self, const Context *context) {
+    if (*self->clicked && context && context->score) {
+        *(context->score) += 1;
+        printf("Score: %d\n", *(context->score));
+    }
+}
+```
+
+Then in `main`:
+
+```c
+int score = 0;
+Context ctx = {.score = &score};
+
+update_gui(&gui, &ctx);  // Pass your app context every frame
 ```
 
 ---
 
-## 🧩 Widget Types
+## 🎨 Drawing
 
-| Type      | Struct   | Needs Font | Interactive | Rendered By         |
-|-----------|----------|------------|-------------|----------------------|
-| Box       | `Box`    | No         | Optional    | `draw_box`           |
-| Text      | `Text`   | Yes        | Optional    | `draw_text`          |
-| Image     | `Image`  | No         | No          | `draw_image`         |
-| Collider  | `Collider` | No       | Yes         | (Logic only)         |
-
----
-
-## 🧰 Utility Functions
-
-- `mouse_in_rect(SDL_Rect *)` - Check if mouse is inside a rect
-- `mousedown()` - Check if left mouse button is held
-- `create_collider_for(Widget *)` - Automatically wraps a widget with a collider
-
----
-
-## 📌 Notes
-
-- Call `SDL_Init`, `TTF_Init`, and `IMG_Init` before using this system.
-- Always clean up textures and fonts you load.
-- Currently supports basic layout and hover/click logic; no scrolling, resizing, or input fields yet.
+- `draw_gui_visible_components()` automatically dispatches drawing for:
+  - `Text`: `draw_text()`
+  - `Box`: `draw_box()`
+  - `Image`: `draw_image()`
 
 ---
 
 ## 📚 Example
 
-Here’s a minimal example showing how to set up a box and make it interactive:
-
 ```c
 Gui gui = {.widget_count = 0};
-Box *box = make_box_widget((SDL_Rect){100, 100, 120, 60}, (SDL_Color){0, 120, 200, 255}, true, change_color_on_hover);
-gui.widgets[gui.widget_count++] = (Widget *)box;
 
-Collider *col = create_collider_for((Widget *)box);
-gui.widgets[gui.widget_count++] = (Widget *)col;
+Box *button = make_box_widget((SDL_Rect){100, 100, 120, 60}, (SDL_Color){100, 50, 200, 255}, true, change_color_on_hover);
+gui.widgets[gui.widget_count++] = (Widget *)button;
+gui.widgets[gui.widget_count++] = (Widget *)create_collider_for((Widget *)button);
+
+Text *label = make_text_widget((SDL_Rect){110, 110, 0, 0}, "Press", (SDL_Color){255, 255, 255, 255}, font, update_score_on_click);
+gui.widgets[gui.widget_count++] = (Widget *)label;
+gui.widgets[gui.widget_count++] = (Widget *)create_collider_for((Widget *)label);
+
+int score = 0;
+Context context = {.score = &score};
 
 gui_init(&gui);
+
+while (running) {
+    interact_gui(&gui);
+    update_gui(&gui, &context);
+    draw_gui_visible_components(&gui, renderer);
+}
 ```
 
-In your game loop:
+---
 
-```c
-interact_gui(&gui);
-update_gui(&gui, &context);
-draw_gui_visible_components(&gui, renderer);
-```
+## 🛠 Utility Functions
+
+| Function                | Purpose                                 |
+|-------------------------|-----------------------------------------|
+| `mousedown()`           | Returns true if left mouse is down      |
+| `mouse_in_rect(rect*)`  | Checks if mouse is inside a rectangle   |
+| `create_collider_for()` | Creates collider around a widget        |
 
 ---
 
-## 🧪 Coming Soon
+## 🧩 Widget Reference
 
-- ✅ Image loading improvements
-- 🔲 Button widgets
-- 🔢 Input fields
-- 🎨 Layout helpers (auto-aligning, spacing)
-- 🧩 Event system (onClick, onHover, etc.)
+| Type     | Struct     | Needs font? | Interactive? | Drawable? |
+|----------|------------|-------------|--------------|-----------|
+| Text     | `Text`     | ✅ Yes       | ✅ Yes        | ✅ Yes     |
+| Box      | `Box`      | ❌ No        | ✅ Yes        | ✅ Yes     |
+| Image    | `Image`    | ❌ No        | ❌ No         | ✅ Yes     |
+| Collider | `Collider` | ❌ No        | ✅ Yes        | ❌ No      |
+
+---
+
+## 📅 Roadmap (Planned)
+
+- [x] Text and box widgets
+- [x] Hover/click detection
+- [x] Personal behavior procedures
+- [ ] Image buttons with scaling
+- [ ] Input text fields
+- [ ] Radio buttons and toggles
+- [ ] Grid/layout helpers
+- [ ] Event hooks (`onClick`, `onEnter`, etc.)
 
 ---
 
-## ❤️ Contributing
-
-Feel free to fork, use, and suggest improvements. This is meant to stay minimal, readable, and modular.
-
----
+*thanks for reading*
