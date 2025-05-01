@@ -1,38 +1,41 @@
-# 🖼️ Système d'Interface Graphique (GUI) simple avec SDL
-
-Ce framework léger utilise **SDL2**, **SDL_ttf** et **SDL_image** pour créer facilement des **widgets interactifs** : textes, boîtes colorées et bientôt des images.
+Voici la **version française** du fichier `README.md`, traduite et adaptée pour plus de clarté :
 
 ---
 
-## 📦 Fonctionnalités
+# 🧱 Framework GUI Simple pour SDL2
 
-- ✅ Ajout facile dans n’importe quel projet SDL
-- 🧱 Widgets disponibles : Texte, Boîte, Collider, Image
-- 🎯 Gestion du survol et des clics
-- 🔧 Possibilité d'ajouter des comportements personnalisés
-- 🏗️ Léger, modulaire et extensible
+Ce framework léger en C permet de créer facilement des **interfaces graphiques interactives** avec **SDL2**, **SDL_ttf** et **SDL_image**.  
+Il propose des composants de base comme **du texte**, **des boîtes colorées**, **des images**, ainsi que **des interactions (survol, clic)**.
 
 ---
 
-## 🚀 Démarrage rapide
+## 🔧 Fonctionnalités
 
-### 1. Initialisation de SDL
+- 🚀 Facile à intégrer dans n'importe quel projet SDL2
+- 🧱 Widgets disponibles : `Texte`, `Boîte`, `Image`, `Collider`
+- 🖱️ Détection du survol et du clic avec des colliders
+- 🧠 **Procédures personnelles** pour comportements personnalisés
+- 📦 Système de `Context` pour connecter l'interface à l'état du programme
 
-Vous aurez besoin d’un `SDL_Renderer` et éventuellement d’une police (`TTF_Font`) pour les widgets texte :
+---
+
+## 📦 Installation de base
+
+### 1. Initialiser SDL et TTF
+
+Avant d'utiliser du texte, initialisez SDL_ttf et chargez une police :
 
 ```c
 TTF_Font *font = TTF_OpenFont("assets/font.TTF", 24);
 if (!font) {
-    fprintf(stderr, "Erreur chargement de la police : %s\n", TTF_GetError());
+    fprintf(stderr, "Erreur chargement police : %s\n", TTF_GetError());
     return 1;
 }
 ```
 
 ---
 
-### 2. Création du GUI
-
-Un `Gui` contient tous vos widgets :
+### 2. Créer un conteneur GUI
 
 ```c
 Gui gui = {.widget_count = 0};
@@ -40,14 +43,14 @@ Gui gui = {.widget_count = 0};
 
 ---
 
-### 3. Ajout de widgets
+### 3. Ajouter des widgets
 
-#### 🟥 Boîte colorée (Box)
+#### 🟦 Boîte
 
 ```c
 Box *box = make_box_widget(
-    (SDL_Rect){100, 50, 100, 40},
-    (SDL_Color){200, 50, 100, 255},
+    (SDL_Rect){100, 50, 120, 60},
+    (SDL_Color){0, 120, 200, 255},
     true,
     change_color_on_hover
 );
@@ -58,8 +61,8 @@ gui.widgets[gui.widget_count++] = (Widget *)box;
 
 ```c
 Text *label = make_text_widget(
-    (SDL_Rect){50, 150, 0, 0},
-    "Clique-moi !",
+    (SDL_Rect){80, 140, 0, 0},
+    "Cliquez-moi !",
     (SDL_Color){255, 255, 255, 255},
     font,
     change_size_on_click
@@ -67,7 +70,9 @@ Text *label = make_text_widget(
 gui.widgets[gui.widget_count++] = (Widget *)label;
 ```
 
-#### ✋ Collider (pour interactivité)
+#### 🖱️ Collider
+
+Pour rendre un widget interactif :
 
 ```c
 Collider *collider = create_collider_for((Widget *)label);
@@ -76,109 +81,139 @@ gui.widgets[gui.widget_count++] = (Widget *)collider;
 
 ---
 
-### 4. Boucle principale
+## 🔁 Boucle principale
 
-Appelez ces fonctions à chaque frame :
+Dans votre boucle principale SDL :
 
 ```c
-interact_gui(&gui);                      // Détection clic/survol
-update_gui(&gui, &context);              // Met à jour les états
+interact_gui(&gui);                       // Gère le survol / clic
+update_gui(&gui, &context);              // Applique les comportements
 draw_gui_visible_components(&gui, renderer);  // Affiche les widgets
 ```
 
-Et une seule fois au début :
+Une fois au démarrage :
 
 ```c
-gui_init(&gui);  // Sauvegarde les couleurs et dimensions originales
+gui_init(&gui);  // Enregistre les couleurs/positions de base
 ```
 
 ---
 
-## 🧠 Comportements personnalisés
+## 🧠 Procédures personnelles & Contexte
 
-Chaque widget peut avoir une fonction de comportement :
+Une **procédure personnelle** est une fonction qui définit un comportement spécial pour un widget.
+
+Exemple : changer la couleur au survol ou au clic :
 
 ```c
 void change_color_on_hover(Widget *self, const Context *context) {
     if (*self->selected) {
-        self->color = *self->clicked
-            ? (SDL_Color){100, 100, 50, 255}
-            : (SDL_Color){170, 170, 50, 255};
+        if (*self->clicked) {
+            self->color = (SDL_Color){100, 100, 50, 255};
+        } else {
+            self->color = (SDL_Color){170, 170, 50, 255};
+        }
     } else {
         self->color = self->default_color;
     }
 }
 ```
 
----
-
-## 🖼️ Widget image (expérimental)
-
-Affichage simple d’image :
+Vous pouvez également utiliser le `Context` pour modifier l'état global :
 
 ```c
-Image *img = malloc(sizeof(Image));
-img->widget.rect = (SDL_Rect){300, 100, 64, 64};
-img->widget.type = WIDGET_IMAGE;
-img->texture = IMG_LoadTexture(renderer, "assets/image.png");
-gui.widgets[gui.widget_count++] = (Widget *)img;
+typedef struct Context {
+    int *score;
+    bool *game_over;
+} Context;
+
+void update_score_on_click(Widget *self, const Context *context) {
+    if (*self->clicked && context && context->score) {
+        *(context->score) += 1;
+        printf("Score : %d\n", *(context->score));
+    }
+}
+```
+
+Et dans `main` :
+
+```c
+int score = 0;
+Context ctx = {.score = &score};
+
+update_gui(&gui, &ctx);  // Transmet l'état de l'appli à l'interface
 ```
 
 ---
 
-## 📊 Types de widgets
+## 🎨 Affichage
 
-| Type       | Structure   | Besoin police ? | Interactif ? | Fonction d'affichage   |
-|------------|-------------|------------------|--------------|-------------------------|
-| Texte      | `Text`      | ✅ Oui            | Optionnel    | `draw_text`             |
-| Boîte      | `Box`       | ❌ Non            | Optionnel    | `draw_box`              |
-| Image      | `Image`     | ❌ Non            | ❌ Non       | `draw_image`            |
-| Collider   | `Collider`  | ❌ Non            | ✅ Oui       | (gère clic/survol)      |
+- `draw_gui_visible_components()` affiche automatiquement :
+  - `Text` avec `draw_text()`
+  - `Box` avec `draw_box()`
+  - `Image` avec `draw_image()`
 
 ---
 
-## 🛠️ Fonctions utilitaires
-
-- `mouse_in_rect(SDL_Rect *)` → Vérifie si la souris est dans un rectangle
-- `mousedown()` → Vérifie si le bouton gauche est cliqué
-- `create_collider_for(Widget *)` → Ajoute un collider automatiquement autour d’un widget
-
----
-
-## 📚 Exemple complet
+## 📚 Exemple
 
 ```c
 Gui gui = {.widget_count = 0};
 
-Box *box = make_box_widget((SDL_Rect){100, 100, 120, 60}, (SDL_Color){0, 120, 200, 255}, true, change_color_on_hover);
-gui.widgets[gui.widget_count++] = (Widget *)box;
+Box *button = make_box_widget((SDL_Rect){100, 100, 120, 60}, (SDL_Color){100, 50, 200, 255}, true, change_color_on_hover);
+gui.widgets[gui.widget_count++] = (Widget *)button;
+gui.widgets[gui.widget_count++] = (Widget *)create_collider_for((Widget *)button);
 
-Collider *col = create_collider_for((Widget *)box);
-gui.widgets[gui.widget_count++] = (Widget *)col;
+Text *label = make_text_widget((SDL_Rect){110, 110, 0, 0}, "Appuyez", (SDL_Color){255, 255, 255, 255}, font, update_score_on_click);
+gui.widgets[gui.widget_count++] = (Widget *)label;
+gui.widgets[gui.widget_count++] = (Widget *)create_collider_for((Widget *)label);
+
+int score = 0;
+Context context = {.score = &score};
 
 gui_init(&gui);
-```
 
-Dans la boucle de rendu :
-
-```c
-interact_gui(&gui);
-update_gui(&gui, &context);
-draw_gui_visible_components(&gui, renderer);
+while (running) {
+    interact_gui(&gui);
+    update_gui(&gui, &context);
+    draw_gui_visible_components(&gui, renderer);
+}
 ```
 
 ---
 
-## 🧪 Fonctionnalités à venir
+## 🛠 Fonctions Utiles
 
-- ✅ Chargement d'images amélioré
-- 🔘 Boutons cliquables
-- 🔡 Champs de texte
-- 🔲 Outils de layout (alignement, espacement)
-- 📣 Système d’événements (`onClick`, `onHover`, etc.)
+| Fonction                | Description                                  |
+|-------------------------|----------------------------------------------|
+| `mousedown()`           | Vérifie si le clic gauche est actif          |
+| `mouse_in_rect(rect*)`  | Vérifie si la souris est dans un rectangle   |
+| `create_collider_for()` | Crée un collider autour d’un widget          |
 
 ---
 
-## ❤️ Contribution
+## 🧩 Référence des Widgets
 
-N’hésitez pas à **forker**, modifier ou proposer des améliorations. Ce framework vise à rester **simple, lisible et modulaire**.
+| Type     | Struct     | Police ? | Interactif ? | Visible ? |
+|----------|------------|----------|--------------|-----------|
+| Texte    | `Text`     | ✅ Oui    | ✅ Oui        | ✅ Oui     |
+| Boîte    | `Box`      | ❌ Non    | ✅ Oui        | ✅ Oui     |
+| Image    | `Image`    | ❌ Non    | ❌ Non        | ✅ Oui     |
+| Collider | `Collider` | ❌ Non    | ✅ Oui        | ❌ Non     |
+
+---
+
+## 📅 Feuille de Route
+
+- [x] Textes et boîtes de base
+- [x] Survol et clic
+- [x] Procédures personnalisées
+- [ ] Boutons image avec redimensionnement
+- [ ] Champs de texte
+- [ ] Boutons radio / toggles
+- [ ] Aides au placement automatique (grid/layout)
+- [ ] Événements (`onClick`, `onEnter`, etc.)
+
+---
+
+Souhaitez-vous que je vous fournisse ces fichiers prêts à être ajoutés dans le dossier de votre projet ?
