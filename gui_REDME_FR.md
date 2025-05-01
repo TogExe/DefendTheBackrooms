@@ -1,6 +1,3 @@
-Voici la **version française** du fichier `README.md`, traduite et adaptée pour plus de clarté :
-
----
 
 # 🧱 Framework GUI Simple pour SDL2
 
@@ -216,4 +213,4 @@ while (running) {
 
 ---
 
-Souhaitez-vous que je vous fournisse ces fichiers prêts à être ajoutés dans le dossier de votre projet ?
+*merci de la lecture et bonne chance*
