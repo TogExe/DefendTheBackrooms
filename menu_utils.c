@@ -17,7 +17,7 @@ typedef enum {
     WIDGET_ROOT
 } WidgetType;
 
-
+typedef struct Context Context;
 typedef struct Widget Widget;
 
 bool mouse_in_rect(const SDL_Rect* rect);
@@ -29,7 +29,7 @@ typedef struct Widget {
     SDL_Rect rect;
     SDL_Color color;
     SDL_Color default_color;
-    void (*personal_procedure)(Widget *self);
+    void (*personal_procedure)(Widget *self,const Context * context);
     bool *clicked;
     bool *selected;
     WidgetType type;
@@ -159,7 +159,7 @@ void interact_gui(const Gui *gui)
     }
 }
 
-void update_gui(const Gui *gui)
+void update_gui(const Gui *gui,const Context * context)
 {
     for (int i = 0; i < gui->widget_count; i++)
     {
@@ -167,14 +167,14 @@ void update_gui(const Gui *gui)
         if (!w) continue;
         if (w->personal_procedure)
         {
-            if (w->clicked) w->personal_procedure(w);
+            if (w->clicked) w->personal_procedure(w,context);
         }
     }
 }
 
 // === Root widget procedures ===
 
-void change_color_on_hover(Widget *self)
+void change_color_on_hover(Widget *self,const Context * context)
 {
     if (*self->selected)
     {
@@ -201,7 +201,7 @@ void change_color_on_hover(Widget *self)
     }
 }
 
-void change_size_on_click(Widget *self)
+void change_size_on_click(Widget *self,const Context * context)
 {
     if (*self->clicked)
     {
@@ -236,7 +236,7 @@ bool mousedown() {
 
 // === Widget creation functions ===
 
-Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self)) {
+Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,const Context * context)) {
     Text *text = malloc(sizeof(Text));
     text->widget.rect = rect;
     text->widget.personal_procedure = personal_procedure;
@@ -249,7 +249,7 @@ Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color
     return text;
 }
 
-Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self)) {
+Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self,const Context * context)) {
     Box *box = malloc(sizeof(Box));
     box->widget.rect = rect;
     box->widget.personal_procedure = personal_procedure;
@@ -340,7 +340,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderClear(renderer);
 
         interact_gui(&gui);
-        update_gui(&gui);
+        update_gui(&gui,NULL);
 
         draw_gui_visible_components(&gui, renderer);
 
