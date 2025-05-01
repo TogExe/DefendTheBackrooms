@@ -42,4 +42,29 @@ Now you have a gui
 
 ### Step 2 : adding your widgets.
 
-The step one was easy right? 
+The step one was easy right? now we will set up your widgets.
+
+all you need is to do is :
+
+```c
+//exemple rectangle
+Box * rectangle = make_box_widget((SDL_Rect){100,10,40,30},(SDL_Color){100,29,179,255},true,change_color_on_hove);
+gui.widgets[gui.widget_count++] = (Widget *)rectangle;
+```
+`(SDL_Rect){100,10,40,30}` is the shape `(SDL_Rect){x,y,w,h}`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
