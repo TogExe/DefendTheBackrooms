@@ -36,6 +36,8 @@ if (!font) {
 
 ```c
 Gui gui = {.widget_count = 0};
+gui.w = SCREEN_WIDTH
+gui.h = SCREEN_HEIGHT
 ```
 
 ---
