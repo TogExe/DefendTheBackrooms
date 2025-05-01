@@ -5,77 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "gui.h"
 
 #define MAX_WIDGETS 128
-
-// Widget types
-typedef enum {
-    WIDGET_TEXT,
-    WIDGET_BOX,
-    WIDGET_COLLIDER,
-    WIDGET_IMAGE,
-    WIDGET_ROOT
-} WidgetType;
-
-typedef struct Context Context;
-typedef struct Widget Widget;
-
-bool mouse_in_rect(const SDL_Rect* rect);
-bool mousedown();
-
-// Base widget
-typedef struct Widget {
-    SDL_Rect origin;
-    SDL_Rect rect;
-    SDL_Color color;
-    SDL_Color default_color;
-    void (*personal_procedure)(Widget *self,const Context * context);
-    bool *clicked;
-    bool *selected;
-    WidgetType type;
-} Widget;
-
-typedef struct Complement {
-    Widget widget;
-} Complement;
-
-// Text widget
-typedef struct Text {
-    Widget widget;
-    char *content;
-    SDL_Color color;
-    TTF_Font *font;
-    float size_multiplier;
-} Text;
-
-// Box widget
-typedef struct Box {
-    Widget widget;
-    bool is_visible;
-    SDL_Rect bounds;
-    SDL_Color color;
-} Box;
-
-// Collider widget
-typedef struct Collider {
-    Widget widget;
-    Widget *target_widget;
-    bool interacted_with;
-    bool hover;
-} Collider;
-
-// Image widget
-typedef struct Image {
-    Widget widget;
-    float scale_multiplier;
-    SDL_Texture *texture;
-} Image;
-
-// GUI structure
-typedef struct Gui {
-    Widget *widgets[MAX_WIDGETS];
-    int widget_count;
-} Gui;
 
 // === Drawing functions === //
 void draw_text(SDL_Renderer *renderer, Text *text) {
