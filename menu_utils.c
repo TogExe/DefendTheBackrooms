@@ -98,7 +98,7 @@ void draw_box(SDL_Renderer *renderer, Box *box) {
 
 void draw_image(SDL_Renderer *renderer, Image *image) {
     if (!image || !image->texture) return;
-    SDL_Rect dst = image->widget.rect;
+    const SDL_Rect dst = image->widget.rect;
     SDL_RenderCopy(renderer, image->texture, NULL, &dst);
 }
 
@@ -236,7 +236,7 @@ bool mousedown() {
 
 // === Widget creation functions ===
 
-Text* make_text_widget(SDL_Rect rect, const char *content, SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self)) {
+Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self)) {
     Text *text = malloc(sizeof(Text));
     text->widget.rect = rect;
     text->widget.personal_procedure = personal_procedure;
@@ -249,7 +249,18 @@ Text* make_text_widget(SDL_Rect rect, const char *content, SDL_Color color, TTF_
     return text;
 }
 
-Collider* make_collider_widget(SDL_Rect rect, Widget *target_widget) {
+Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self)) {
+    Box *box = malloc(sizeof(Box));
+    box->widget.rect = rect;
+    box->widget.personal_procedure = personal_procedure;
+    box->widget.clicked = NULL;
+    box->is_visible = visible;
+    box->widget.type = WIDGET_BOX;
+    box->widget.color = color;
+    return box;
+}
+
+Collider* make_collider_widget(const SDL_Rect rect, Widget *target_widget) {
     Collider *collider = malloc(sizeof(Collider));
     collider->widget.rect = rect;
     if (target_widget->type == WIDGET_TEXT)
@@ -290,7 +301,7 @@ int main(int argc, char *argv[]) {
     Gui gui = {.widget_count = 0};
 
     // Create a Box widget
-    Box *background = malloc(sizeof(Box));
+    /*Box *background = malloc(sizeof(Box));
     background->widget.rect = (SDL_Rect){90, 40, 200, 50};
     background->widget.personal_procedure = NULL;
     background->widget.clicked = NULL;
@@ -298,8 +309,8 @@ int main(int argc, char *argv[]) {
     background->widget.personal_procedure = change_color_on_hover;
     background->widget.color = (SDL_Color){0, 0, 255, 255};
     background->is_visible = true;
-    background->bounds = background->widget.rect;
-
+    background->bounds = background->widget.rect;*/
+    Box * background = make_box_widget((SDL_Rect){100,10,40,30},(SDL_Color){100,29,179,255},true,change_color_on_hover);
     gui.widgets[gui.widget_count++] = (Widget *)background;
 
     // Create a Text widget using the new function
@@ -307,8 +318,11 @@ int main(int argc, char *argv[]) {
     gui.widgets[gui.widget_count++] = (Widget *)title;
 
     // Create Collider for the Text widget using the new function
-    Collider *text_collider = create_collider_for((Widget *)background);
+    Collider *text_collider = create_collider_for((Widget *)title);
     gui.widgets[gui.widget_count++] = (Widget *)text_collider;
+
+    Collider *button = create_collider_for((Widget *)background);
+    gui.widgets[gui.widget_count++] = (Widget *)button;
 
     // Main loop
     bool running = true;
