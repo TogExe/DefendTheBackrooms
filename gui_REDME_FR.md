@@ -36,8 +36,8 @@ if (!font) {
 
 ```c
 Gui gui = {.widget_count = 0};
-gui.w = SCREEN_WIDTH
-gui.h = SCREEN_HEIGHT
+gui.w = WIDTH // a remplacer par un int positif
+gui.h = HEIGHT// a remplacer par un int positif
 ```
 
 ---
