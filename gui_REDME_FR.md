@@ -4,7 +4,7 @@
 Ce framework léger en C permet de créer facilement des **interfaces graphiques interactives** avec **SDL2**, **SDL_ttf** et **SDL_image**.  
 Il propose des composants de base comme **du texte**, **des boîtes colorées**, **des images**, ainsi que **des interactions (survol, clic)**.
 
-### ⚠️ Une  mise a jour a été appliqué afin de s'assurer de bien maintenir la mémoire.
+### ⚠️ Une  mise a jour a été appliqué afin de s'assurer de bien maintenir la mémoire. Pensez a verifier si votre programme est toujours compatible.
 
 ---
 
