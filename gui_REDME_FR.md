@@ -93,6 +93,7 @@ draw_gui_visible_components(&gui, renderer);  // Affiche les widgets
 Une fois au démarrage :
 
 ```c
+bind_gui(&gui) //Permet de libérer la mémoire
 gui_init(&gui);  // Enregistre les couleurs/positions de base
 ```
 
