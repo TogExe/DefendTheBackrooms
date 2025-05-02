@@ -50,9 +50,9 @@ gui.h = HEIGHT// a remplacer par un int positif
 
 ```c
 Box *box = make_box_widget(
-    (SDL_Rect){100, 50, 120, 60},
-    (SDL_Color){0, 120, 200, 255},
-    true,
+    (SDL_Rect){100, 50, 120, 60}, //un rectangle de sdl
+    (SDL_Color){0, 120, 200, 255}, // une couleur de sdl
+    true, // visible ?
     change_color_on_hover // un des scripts par défaut
 );
 gui.widgets[gui.widget_count++] = (Widget *)box;
@@ -63,9 +63,9 @@ gui.widgets[gui.widget_count++] = (Widget *)box;
 ```c
 Text *label = make_text_widget(
     (SDL_Rect){80, 140, 0, 0},
-    "Cliquez-moi !",
+    "Cliquez-moi !", // contenu
     (SDL_Color){255, 255, 255, 255},
-    font,
+    font, // la police que vous avez définit
     change_size_on_click //un des scripts par défaut 
 );
 gui.widgets[gui.widget_count++] = (Widget *)label;
