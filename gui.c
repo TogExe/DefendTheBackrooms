@@ -1,13 +1,25 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "gui.h"
+// free
 
-#define MAX_WIDGETS 128
+void free_box(void * object) {
+    free((Box*)object);
+}
+
+void free_collider(void * object) {
+    free((Collider*)object);
+}
+
+void free_text(void * object) {
+    Text* text = (Text*)object;
+    if (text) {
+        free(text->content);
+        free(text);
+    }
+}
+
+void free_image(void * object) {
+    free((Image*)object);
+}
 
 // === Drawing functions === //
 void draw_text(SDL_Renderer *renderer, Text *text) {
@@ -25,7 +37,6 @@ void draw_box(SDL_Renderer *renderer, Box *box) {
     if (!box || !box->is_visible) return;
     SDL_SetRenderDrawColor(renderer, box->widget.color.r, box->widget.color.g, box->widget.color.b, box->widget.color.a);
     SDL_RenderFillRect(renderer, &box->widget.rect);
-    printf("Drawing Box at (%d, %d) with size (%d, %d)\n", box->widget.rect.x, box->widget.rect.y, box->widget.rect.w, box->widget.rect.h);
 }
 
 void draw_image(SDL_Renderer *renderer, Image *image) {
@@ -33,6 +44,7 @@ void draw_image(SDL_Renderer *renderer, Image *image) {
     const SDL_Rect dst = image->widget.rect;
     SDL_RenderCopy(renderer, image->texture, NULL, &dst);
 }
+
 void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer){
     for (int i = 0; i < gui->widget_count; i++) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
@@ -61,6 +73,43 @@ void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer){
 }
 
 // === Initializing and closing ===
+
+bool if_text_bind(void * object) {
+    Text* text = (Text*)object;
+    if (!text) return false;
+    text -> widget.upper_component = object;
+    text -> widget.deletion_procedure = free_text;
+    return true;
+}
+
+bool if_box_bind(void * object) {
+    Box* box = (Box*)object;
+    if (!box) return false;
+    box->widget.upper_component = object;
+    box->widget.deletion_procedure = free_box;
+    return true;
+}
+
+bool if_collider_bind(void * object) {
+    Collider* collider = (Collider*)object;
+    if (!collider) return false;
+    collider->widget.upper_component = object;
+    collider->widget.deletion_procedure = free_collider;
+    return true;
+}
+
+void bind_gui(const Gui *gui) {
+    for (int i = 0; i < gui->widget_count; i++) {
+        if (!if_box_bind(gui->widgets[i])){
+            if (!if_text_bind(gui->widgets[i])) {
+                if (!if_collider_bind(gui->widgets[i])) {
+                    printf("wtf is that");
+                }
+            }
+        }
+    }
+}
+
 void gui_init(const Gui *gui)
 {
     for (int i = 0; i < gui->widget_count; i++)
@@ -70,6 +119,22 @@ void gui_init(const Gui *gui)
         w->origin = w->rect;
         w->default_color = w->color;
     }
+    bind_gui(gui);
+}
+
+void free_gui(const Gui *gui) {
+    for (int i = 0; i < gui->widget_count; i++) {
+        Widget *w = gui->widgets[i];
+        if (!w) continue;
+        if (w->upper_component!=NULL&&w->deletion_procedure!=NULL) {
+            w->deletion_procedure(w->upper_component);
+        }else if (w->upper_component){
+            free(w->upper_component);
+        }else {
+            free(w);
+        }
+    }
+    printf("everything should be free\n");
 }
 
 // === Letting widgets actually do stuff ===
@@ -85,7 +150,6 @@ void interact_gui(const Gui *gui)
         if (!collider->target_widget) continue;
 
         const bool in_rect = mouse_in_rect(&collider->widget.rect);
-        printf("collider state : %d %d", mouse_is_down,in_rect);
         collider->hover = in_rect;
         collider->target_widget->selected = &collider->hover;
         collider->interacted_with = (in_rect && mouse_is_down);
@@ -93,7 +157,7 @@ void interact_gui(const Gui *gui)
     }
 }
 
-void update_gui(const Gui *gui,const Context * context)
+void update_gui(const Gui *gui, Context * context)
 {
     for (int i = 0; i < gui->widget_count; i++)
     {
@@ -106,53 +170,6 @@ void update_gui(const Gui *gui,const Context * context)
     }
 }
 
-// === Root widget procedures ===
-
-void change_color_on_hover(Widget *self,const Context * context)
-{
-    if (*self->selected)
-    {
-        if ( *self->clicked)
-        {
-            printf("tex_clicked");
-            self->color.r = 100;
-            self->color.g = 100;
-            self->color.b = 50;
-            self->color.a = 255;
-        }
-        else
-        {
-            printf("tex_hover");
-            self->color.r = 170;
-            self->color.g = 170;
-            self->color.b = 50;
-            self->color.a = 255;
-        }
-    }
-    else
-    {
-        self->color = self->default_color;
-    }
-}
-
-void change_size_on_click(Widget *self,const Context * context)
-{
-    if (*self->clicked)
-    {
-        printf("Self got clicked yayy\n");
-        self->rect.w = self->origin.w-20;
-        self->rect.h = self->origin.h-20;
-        self->rect.x = self->origin.x + (self->origin.w - self->rect.w)/2;
-        self->rect.y = self->origin.y + (self->origin.h - self->rect.h)/2;
-    }
-    else
-    {
-        self->rect.w = self->origin.w;
-        self->rect.h = self->origin.h;
-        self->rect.x = self->origin.x;
-        self->rect.y = self->origin.y;
-    }
-}
 
 // === Utility ===
 
@@ -170,7 +187,7 @@ bool mousedown() {
 
 // === Widget creation functions ===
 
-Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,const Context * context)) {
+Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context)) {
     Text *text = malloc(sizeof(Text));
     text->widget.rect = rect;
     text->widget.personal_procedure = personal_procedure;
@@ -183,7 +200,7 @@ Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color
     return text;
 }
 
-Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self,const Context * context)) {
+Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context)) {
     Box *box = malloc(sizeof(Box));
     box->widget.rect = rect;
     box->widget.personal_procedure = personal_procedure;
@@ -215,78 +232,58 @@ Collider* create_collider_for(Widget *target_widget) {
     return make_collider_widget(target_widget->rect, target_widget);
 }
 
-// === Mainloop for testing ===
+// === Root widget procedures ===
 
-/*int main(int argc, char *argv[]) {
-    SDL_Init(SDL_INIT_VIDEO);
-    TTF_Init();
-    IMG_Init(IMG_INIT_PNG);
-
-    SDL_Window *window = SDL_CreateWindow("SDL2 GUI", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    TTF_Font *font = TTF_OpenFont("assets/font.TTF", 24);
-    if (!font) {
-        fprintf(stderr, "Failed to load font: %s\n", TTF_GetError());
-        return 1;
-    }
-
-    // Example GUI
-    Gui gui = {.widget_count = 0};
-
-    // Create a Box widget
-    /*Box *background = malloc(sizeof(Box));
-    background->widget.rect = (SDL_Rect){90, 40, 200, 50};
-    background->widget.personal_procedure = NULL;
-    background->widget.clicked = NULL;
-    background->widget.type = WIDGET_BOX;
-    background->widget.personal_procedure = change_color_on_hover;
-    background->widget.color = (SDL_Color){0, 0, 255, 255};
-    background->is_visible = true;
-    background->bounds = background->widget.rect;
-    Box * background = make_box_widget((SDL_Rect){100,10,40,30},(SDL_Color){100,29,179,255},true,change_color_on_hover);
-    gui.widgets[gui.widget_count++] = (Widget *)background;
-
-    // Create a Text widget using the new function
-    Text *title = make_text_widget((SDL_Rect){100, 50, 280, 100}, "Hello, SDL2 GUI!", (SDL_Color){255, 255, 255, 255}, font, change_color_on_hover);
-    gui.widgets[gui.widget_count++] = (Widget *)title;
-
-    // Create Collider for the Text widget using the new function
-    Collider *text_collider = create_collider_for((Widget *)title);
-    gui.widgets[gui.widget_count++] = (Widget *)text_collider;
-
-    Collider *button = create_collider_for((Widget *)background);
-    gui.widgets[gui.widget_count++] = (Widget *)button;
-
-    // Main loop
-    bool running = true;
-    SDL_Event e;
-    gui_init(&gui);
-
-    while (running) {
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT)
-                running = false;
+void change_color_on_hover(Widget *self, Context * context)
+{
+    if (*self->selected)
+    {
+        if ( *self->clicked)
+        {
+            //printf("tex_clicked");
+            self->color.r = 100;
+            self->color.g = 100;
+            self->color.b = 50;
+            self->color.a = 255;
         }
-
-        SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
-        SDL_RenderClear(renderer);
-
-        interact_gui(&gui);
-        update_gui(&gui,NULL);
-
-        draw_gui_visible_components(&gui, renderer);
-
-        SDL_RenderPresent(renderer);
+        else
+        {
+            //printf("tex_hover");
+            self->color.r = 170;
+            self->color.g = 170;
+            self->color.b = 50;
+            self->color.a = 255;
+        }
     }
-
-    // Cleanup
-    TTF_CloseFont(font);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
-    return 0;
+    else
+    {
+        self->color = self->default_color;
+    }
 }
-*/
+
+void change_size_on_click(Widget *self, Context * context)
+{
+    if (*self->clicked)
+    {
+        //printf("Self got clicked yayy\n");
+        self->rect.w = self->origin.w-20;
+        self->rect.h = self->origin.h-20;
+        self->rect.x = self->origin.x + (self->origin.w - self->rect.w)/2;
+        self->rect.y = self->origin.y + (self->origin.h - self->rect.h)/2;
+    }
+    else
+    {
+        self->rect.w = self->origin.w;
+        self->rect.h = self->origin.h;
+        self->rect.x = self->origin.x;
+        self->rect.y = self->origin.y;
+    }
+}
+
+
+void exit_on_click(Widget *self, Context * context) {
+    if (*self->clicked) {
+        context->running=0;
+        printf("exiting...\n");
+    }
+}
