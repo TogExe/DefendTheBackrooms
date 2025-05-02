@@ -3,11 +3,12 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
 // Define maximum widgets for GUI
 #define MAX_WIDGETS 128
+#define MAX_WIDGETS 128
+
 
 // Widget types
 typedef enum {
@@ -18,66 +19,80 @@ typedef enum {
     WIDGET_ROOT
 } WidgetType;
 
-// Forward declaration of Context and Widget structures
 typedef struct Context Context;
 typedef struct Widget Widget;
 
-// Widget structure
+bool mouse_in_rect(const SDL_Rect* rect);
+bool mousedown();
+
+// Base widget
 typedef struct Widget {
-    SDL_Rect origin;  // The original position and size
-    SDL_Rect rect;    // The current position and size
-    SDL_Color color;  // The color of the widget
-    SDL_Color default_color; // Default color
-    void (*personal_procedure)(Widget *self, const Context *context); // Custom procedure for the widget
-    bool *clicked;     // Whether the widget was clicked
-    bool *selected;    // Whether the widget is selected
-    WidgetType type;   // The type of widget (text, box, etc.)
+    SDL_Rect origin;
+    SDL_Rect rect;
+    SDL_Color color;
+    SDL_Color default_color;
+    void (*personal_procedure)(Widget *self,Context * context);
+    bool *clicked;
+    bool *selected;
+    WidgetType type;
+    void * upper_component;
+    void (*deletion_procedure)(void*);
 } Widget;
 
-// Text widget structure
+typedef struct Complement {
+    Widget widget;
+} Complement;
+
+// Text widget
 typedef struct Text {
     Widget widget;
-    char *content;      // The text content
-    SDL_Color color;    // The color of the text
-    TTF_Font *font;     // Font for the text
-    float size_multiplier; // Size multiplier for the text
+    char *content;
+    SDL_Color color;
+    TTF_Font *font;
+    float size_multiplier;
 } Text;
+// the free procedure
 
-// Box widget structure
+// Box widget
 typedef struct Box {
     Widget widget;
-    bool is_visible;    // Whether the box is visible
-    SDL_Rect bounds;    // Bounds of the box
-    SDL_Color color;    // Color of the box
+    bool is_visible;
+    SDL_Rect bounds;
+    SDL_Color color;
 } Box;
+// to free a box
 
-// Collider widget structure
+// Collider widget
 typedef struct Collider {
     Widget widget;
-    Widget *target_widget;   // The widget to which this collider is attached
-    bool interacted_with;    // Whether the collider was interacted with
-    bool hover;              // Whether the mouse is hovering over the collider
+    Widget *target_widget;
+    bool interacted_with;
+    bool hover;
 } Collider;
+// to free a collider
 
-// Image widget structure
+// Image widget
 typedef struct Image {
     Widget widget;
-    float scale_multiplier;  // Scale multiplier for the image
-    SDL_Texture *texture;    // Texture for the image
+    float scale_multiplier;
+    SDL_Texture *texture;
 } Image;
+// to free an image
 
 // GUI structure
 typedef struct Gui {
-    Widget *widgets[MAX_WIDGETS];  // Array of widgets
-    int widget_count;// The number of widgets
-    int w;// The screen width to set a corner 
-    int h;// The screen height
+    Widget *widgets[MAX_WIDGETS];
+    int widget_count;
+    int w;
+    int h;
 } Gui;
 
-// Function declarations
+// Widget types
 
 // === Initialization === //
 void gui_init(const Gui *gui);
+void free_gui(const Gui *gui);
+void bind_gui(const Gui *gui);
 
 // === Drawing functions === //
 void draw_text(SDL_Renderer *renderer, Text *text);
@@ -87,11 +102,22 @@ void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer);
 
 // === Interaction and update functions === //
 void interact_gui(const Gui *gui);
-void update_gui(const Gui *gui, const Context *context);
+void update_gui(const Gui *gui, Context * context);
+
+// === Free system ===
+void free_box(void * object);
+void free_text(void * object);
+void free_image(void * object);
+void free_collider(void * object);
+
+// === Widget binding back system ===
+bool if_collider_bind(void * object);
+bool if_text_bind(void * object);
+bool if_box_bind(void * object);
 
 // === Widget creation functions === //
-Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self, const Context *context));
-Box* make_box_widget(const SDL_Rect rect, const SDL_Color color, const bool visible, void (*personal_procedure)(Widget *self, const Context *context));
+Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context));
+Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context));
 Collider* make_collider_widget(const SDL_Rect rect, Widget *target_widget);
 Collider* create_collider_for(Widget *target_widget);
 
@@ -100,7 +126,8 @@ bool mouse_in_rect(const SDL_Rect *rect);
 bool mousedown();
 
 // === Root widget procedures === //
-void change_color_on_hover(Widget *self, const Context *context);
-void change_size_on_click(Widget *self, const Context *context);
+void change_color_on_hover(Widget *self, Context * context);
+void change_size_on_click(Widget *self, Context * context);
+void exit_on_click(Widget *self, Context * context);
 
 #endif // GUI_H
