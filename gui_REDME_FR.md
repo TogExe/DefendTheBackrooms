@@ -93,7 +93,7 @@ draw_gui_visible_components(&gui, renderer);  // Affiche les widgets
 Une fois au démarrage :
 
 ```c
-bind_gui(&gui) //Permet de libérer la mémoire
+bind_gui(&gui) //Permet de libérer la mémoire a la fin du programme
 gui_init(&gui);  // Enregistre les couleurs/positions de base
 ```
 
@@ -178,6 +178,7 @@ while (running) {
     update_gui(&gui, &context);
     draw_gui_visible_components(&gui, renderer);
 }
+free_gui(&gui) // pour libérer la mémoire
 ```
 
 ---
