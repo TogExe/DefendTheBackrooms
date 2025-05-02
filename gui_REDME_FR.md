@@ -4,6 +4,8 @@
 Ce framework léger en C permet de créer facilement des **interfaces graphiques interactives** avec **SDL2**, **SDL_ttf** et **SDL_image**.  
 Il propose des composants de base comme **du texte**, **des boîtes colorées**, **des images**, ainsi que **des interactions (survol, clic)**.
 
+### ⚠️ Une  mise a jour a été appliqué afin de s'assurer de bien maintenir la mémoire.
+
 ---
 
 ## 🔧 Fonctionnalités
@@ -93,7 +95,6 @@ draw_gui_visible_components(&gui, renderer);  // Affiche les widgets
 Une fois au démarrage :
 
 ```c
-bind_gui(&gui) //Permet de libérer la mémoire a la fin du programme
 gui_init(&gui);  // Enregistre les couleurs/positions de base
 ```
 
