@@ -53,7 +53,7 @@ Box *box = make_box_widget(
     (SDL_Rect){100, 50, 120, 60},
     (SDL_Color){0, 120, 200, 255},
     true,
-    change_color_on_hover
+    change_color_on_hover // un des scripts par défaut
 );
 gui.widgets[gui.widget_count++] = (Widget *)box;
 ```
@@ -66,7 +66,7 @@ Text *label = make_text_widget(
     "Cliquez-moi !",
     (SDL_Color){255, 255, 255, 255},
     font,
-    change_size_on_click
+    change_size_on_click //un des scripts par défaut 
 );
 gui.widgets[gui.widget_count++] = (Widget *)label;
 ```
