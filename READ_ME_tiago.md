@@ -67,6 +67,8 @@ Cette fonction dessine la carte à l’écran selon les valeurs de `map` :
 - `0` → sol vert,
 - `1` → chemin marron,
 - Dernière ligne du chemin (`y == MAP_SIZE - 1`) → blanc pour la destination.
+- Le rendement SDL multiplie le tout par TILE_SIZE
+- les coordonnées restent cependant seulement en fonction de MAP_SIZE (enemy_x, tower_x par exemple) 
 
 ## Utilisation dans `main`
 
