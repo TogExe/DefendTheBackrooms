@@ -1,5 +1,5 @@
-#include "generator.h"
-#include "pathfinder.h"
+#include "headers/generator.h"
+#include "headers/pathfinder.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -30,12 +30,13 @@ static int cost(char tile, char *avoid, int avoid_count, char *prefer, int prefe
     return diag ? 14 : 10;
 }
 
-int generate_organic_path(char grid[MAX_SIDE][MAX_SIDE], int side) {
-    Node start = {0, 0}, end = {side-1,side-1};
-    char avoid[5] = {'w','x','e','K','J'};
+int generate_organic_path(int side,char grid[MAX_SIDE][MAX_SIDE]) {
+	srand(1);
+    Node start = {rand()%(side-1),0}, end = {rand()%(side-1),side-1};
+	char avoid[5] = {'w','x','e','K','J'};
     char prefer[7] = {'a','b','c','d','e','f','g'};
-    int avoid_count=5; 
-    int prefer_count=7;
+	int avoid_count = 6;
+	int prefer_count = 7;
     // Dynamically allocate memory for came_from, g_score, and open
     int (*came_from)[side][2] = malloc(sizeof(int) * side * side * 2);
     int (*g_score)[side] = malloc(sizeof(int) * side * side);
