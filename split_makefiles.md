@@ -19,7 +19,8 @@ clean:
 	rm -f *.o gui_demo
 
 # generation
- # Compiler
+```Makefile
+# Compiler
 CC = gcc
 
 # Compiler flags
@@ -56,4 +57,5 @@ clean:
 	rm -f $(OBJS) $(TARGET)
 
 # Phony targets
-.PHONY: all clean
+.PHONY
+```
