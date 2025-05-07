@@ -2,6 +2,10 @@
 
 #include "fonctions.h"
 
+typedef  struct Enemy{
+
+}Enemy;
+
 // ████████████████████████████████ MAIN ████████████████████████████████
 int main(int argc, char *argv[]) {
 
