@@ -51,14 +51,12 @@ int main(int argc, char* argv[]) {
     init_constraints(&set);
     convert_constraints(&set, constraints, &tile_count);
 	
-    char avoid[5] = {'w','x','e','K','J'};
-    char prefer[7] = {'a','b','c','d','e','f','g'};
     int ptgs = -1;
     while (ptgs ==-1)
     {
         generate_grid_with_constraints(side, grid, constraints, tile_count);
         create_terminal_grid_buffer(grid,50,50);
-        ptgs = generate_organic_path(grid, side, avoid, 5, prefer, 7);
+        ptgs = generate_organic_path(grid, side);
     }
 	
     SDL_Init(SDL_INIT_VIDEO);
