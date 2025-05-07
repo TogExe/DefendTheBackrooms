@@ -1,9 +1,13 @@
+// gui.h
 #ifndef GUI_H
 #define GUI_H
 
+#include <math.h>
+#include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
+#include <SDL2/SDL_mixer.h>
 
 // Define maximum widgets for GUI
 #define MAX_WIDGETS 128
@@ -99,10 +103,10 @@ void draw_text(SDL_Renderer *renderer, Text *text);
 void draw_box(SDL_Renderer *renderer, Box *box);
 void draw_image(SDL_Renderer *renderer, Image *image);
 void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer);
+void update_gui(const Gui *gui, Context * context);
 
 // === Interaction and update functions === //
 void interact_gui(const Gui *gui);
-void update_gui(const Gui *gui, Context * context);
 
 // === Free system ===
 void free_box(void * object);
@@ -118,6 +122,7 @@ bool if_box_bind(void * object);
 // === Widget creation functions === //
 Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context));
 Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context));
+Box * debug_box(Text*text);
 Collider* make_collider_widget(const SDL_Rect rect, Widget *target_widget);
 Collider* create_collider_for(Widget *target_widget);
 
@@ -129,5 +134,6 @@ bool mousedown();
 void change_color_on_hover(Widget *self, Context * context);
 void change_size_on_click(Widget *self, Context * context);
 void exit_on_click(Widget *self, Context * context);
-
+void pause_unpause(Widget* self, Context * context);
+void animate(Widget*self,Context*context);
 #endif // GUI_H
