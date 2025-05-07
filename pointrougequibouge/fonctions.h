@@ -34,10 +34,10 @@ typedef struct{
   int tir_actif ;
   }tower;
   
-typedef struct{
+typedef struct Enemy{
   int life;
   int speed;
-  }enemy;
+  }Enemy;
   
 typedef struct {
     int x1, y1, x2, y2;
