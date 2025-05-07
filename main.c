@@ -82,6 +82,7 @@ int main(int argc, char* argv[]) {
                 running = 0;
             }
         }
+	//<---------------------------------------------------------------- SIMULATION DE L'ENTITÉ ICI
 
         // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -90,6 +91,8 @@ int main(int argc, char* argv[]) {
         // Draw the pixel grid
         draw_pixel_grid(renderer, side,side, gridSize, grid);
 
+	//  <--------------------------------------------------------------------------- AFFICHAGE DE L'ENTITÉ ICI 
+	
         // Present the renderer
         SDL_RenderPresent(renderer);
     }
