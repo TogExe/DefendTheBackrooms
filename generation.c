@@ -54,10 +54,10 @@
     }
 }
 
-void generation_map(char map[MAP_SIZE][MAP_SIZE]) {
-    int x = rand() % MAP_SIZE; 
+void generation_map(int side, char map[side][side]) {
+    int x = rand() % side; 
 
-    for (int y = 0; y < MAP_SIZE; y++) {
+    for (int y = 0; y < side; y++) {
         map[x][y] = ' '; // Marquer chemin
 
         // Choisir direction aléatoire (gauche, droite ou tout droit)
@@ -65,7 +65,7 @@ void generation_map(char map[MAP_SIZE][MAP_SIZE]) {
 
         if (direction == 0 && x > 0) {
             x--; // Aller à gauche
-        } else if (direction == 2 && x < MAP_SIZE - 1) {
+        } else if (direction == 2 && x < side - 1) {
             x++; // Aller à droite
         }
         // Sinon continuer tout droit
@@ -75,10 +75,10 @@ void generation_map(char map[MAP_SIZE][MAP_SIZE]) {
 
 
 
-void draw_map(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE]) {
+void draw_map(SDL_Renderer *renderer, int side, int tile_size,  char map[side][side]) {
 	char chara;
-    for (int x = 0; x < MAP_SIZE; x++) {
-        for (int y = 0; y < MAP_SIZE; y++) {
+    for (int x = 0; x < side; x++) {
+        for (int y = 0; y < side; y++) {
             if (map[x][y] != ' ') {
                 SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255); // Vert pour sol
             /* AJOUTER switch case pour un caractère "a" = une couleur 
@@ -90,19 +90,19 @@ void draw_map(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE]) {
             } else {
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Marron pour chemin
               }
-            if (y==MAP_SIZE -1 && map[x][y]==1){
+            if (y==side -1 && map[x][y]==1){
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
               }
             
-            SDL_Rect rect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
             SDL_RenderFillRect(renderer, &rect);
         }
     }
 }
 
 
-int trouver_depart(char map[MAP_SIZE][MAP_SIZE]) {
-    for (int i = 0; i < MAP_SIZE; i++)
+int find_start(int side, char map[side][side]) {
+    for (int i = 0; i < side; i++)
         if (map[i][0] == ' ') return i;
     return -1;
 }

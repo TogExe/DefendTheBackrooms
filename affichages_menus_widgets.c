@@ -7,7 +7,7 @@
 #include "fichier_h/constantes_structures.h"
 
 
-void affiche_image(SDL_Renderer *renderer, const char *image_path, int x, int y) {
+void paste_image(SDL_Renderer *renderer, const char *image_path, int x, int y, int tile_size) {
     SDL_Surface *surface = IMG_Load(image_path);
     if (!surface) {
         printf("Erreur chargement image : %s\n", IMG_GetError());
@@ -21,7 +21,7 @@ void affiche_image(SDL_Renderer *renderer, const char *image_path, int x, int y)
         return;
     }
 
-    SDL_Rect dst = { x, y, TILE_SIZE, TILE_SIZE }; // Ajuste selon la taille souhaitée
+    SDL_Rect dst = { x, y, tile_size, tile_size }; // Ajuste selon la taille souhaitée
     SDL_RenderCopy(renderer, texture, NULL, &dst);
     SDL_DestroyTexture(texture);
 
@@ -65,7 +65,7 @@ void draw_hud(SDL_Renderer *renderer, TTF_Font *font, int vie, int argent) {
 
 //••••••••••••••••••••••••••••••fonction menu return 0 si jeu non lancé et 1 si passe au jeu•••••••••••••••••••
 
-int afficher_menu_debut(SDL_Renderer *renderer, TTF_Font *font) {
+int start_menu(SDL_Renderer *renderer, TTF_Font *font, int side, int tile_size) {
     SDL_Event event;
     int menu_running = 1;
     SDL_Color textColor = {255, 255, 255, 255};
@@ -77,7 +77,7 @@ int afficher_menu_debut(SDL_Renderer *renderer, TTF_Font *font) {
     
     int texW = 0, texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = {MAP_SIZE * TILE_SIZE / 2 - texW / 2, MAP_SIZE * TILE_SIZE / 2 - texH / 2, texW, texH};
+    SDL_Rect dstrect = {side * tile_size / 2 - texW / 2, side * tile_size / 2 - texH / 2, texW, texH};
 
     while (menu_running) {
         while (SDL_PollEvent(&event)) {
@@ -100,7 +100,7 @@ int afficher_menu_debut(SDL_Renderer *renderer, TTF_Font *font) {
     return 1; // Passe au jeu
 }
 
-int afficher_menu_fin(SDL_Renderer *renderer, TTF_Font *font) {
+int end_menu(SDL_Renderer *renderer, TTF_Font *font, int side, int tile_size) {
     
     SDL_Event event;
     int menu_running = 1;
@@ -113,7 +113,7 @@ int afficher_menu_fin(SDL_Renderer *renderer, TTF_Font *font) {
     
     int texW = 0, texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = {MAP_SIZE * TILE_SIZE / 2 - texW / 2, MAP_SIZE * TILE_SIZE / 2 - texH / 2, texW, texH};
+    SDL_Rect dstrect = {side * tile_size / 2 - texW / 2, side * tile_size / 2 - texH / 2, texW, texH};
 
     while (menu_running) {
         while (SDL_PollEvent(&event)) {
@@ -136,9 +136,9 @@ int afficher_menu_fin(SDL_Renderer *renderer, TTF_Font *font) {
     return 1; // termine le jeu
 }
 
-void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* start, int* vie, int* argent,
-             char map[MAP_SIZE][MAP_SIZE], int click_positions[MAX_CLICKS][2], int* click_count,
-             tower towers[MAX_TOWERS], int* tower_count, SDL_Texture* icon_texture) {
+void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* start, int* vie, int* argent, int side,
+             char map[side][side], int tile_size, int click_positions[MAX_CLICKS][2], int* click_count,
+             Tower towers[MAX_TOWERS], int* tower_count, SDL_Texture* icon_texture) {
 
     SDL_Event event;
     SDL_Color text_color = {0, 0, 0, 255};
@@ -176,7 +176,7 @@ void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* st
                     // Clic pour placer une tourelle
                     int final_x, final_y;
                     if (*click_count < MAX_CLICKS &&
-                        draw_click_zone(renderer, mx, my, map, &final_x, &final_y, click_positions, *click_count, *argent)) {
+                        draw_click_zone(renderer, mx, my,side,   map,tile_size,  &final_x, &final_y, click_positions, *click_count, *argent)) {
 
                         click_positions[*click_count][0] = final_x;
                         click_positions[*click_count][1] = final_y;
@@ -186,7 +186,7 @@ void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* st
                         towers[*tower_count].x = final_x;
                         towers[*tower_count].y = final_y;
                         towers[*tower_count].damage = 1;
-                        towers[*tower_count].range = 3 * TILE_SIZE;
+                        towers[*tower_count].range = 3 * tile_size;
                         towers[*tower_count].speed_damage = 30;
                         towers[*tower_count].cooldown = 0;
                         (*tower_count)++;
@@ -199,13 +199,13 @@ void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* st
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
-        draw_map(renderer, map);
+        draw_map(renderer,side, tile_size , map);
 
         // Dessiner les tourelles déjà posées
         for (int i = 0; i < *click_count; i++) {
             int x = click_positions[i][0];
             int y = click_positions[i][1];
-            SDL_Rect dst = { x, y, TILE_SIZE, TILE_SIZE };
+            SDL_Rect dst = { x, y, tile_size, tile_size };
             SDL_RenderCopy(renderer, icon_texture, NULL, &dst);
         }
 
@@ -236,7 +236,7 @@ void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* st
     }
 }
 
-SDL_Texture* charger_texture(SDL_Renderer *renderer, const char *path) {
+SDL_Texture* charge_texture(SDL_Renderer *renderer, const char *path) {
     SDL_Surface *surface = IMG_Load(path);
     if (!surface) return NULL;
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);

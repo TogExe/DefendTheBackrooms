@@ -3,8 +3,8 @@
 
 #include "constantes_structures.h"
 
-int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y, char map[MAP_SIZE][MAP_SIZE],
+int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y,int side,  char map[side][side], int tile_size,
                     int *out_x, int *out_y, int click_positions[MAX_CLICKS][2], int click_count, int argent);
-void tourelle(tower* towers, int tower_count, enemy* enemies, int enemy_count, Mix_Chunk *tir_son);
+void turret(Tower* towers, int tower_count, Enemy* enemies, int enemy_count, Mix_Chunk *tir_son, int tile_size);
 
 #endif

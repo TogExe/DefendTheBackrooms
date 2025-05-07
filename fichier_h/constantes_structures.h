@@ -14,8 +14,8 @@
 
 #define MAX_ENEMIES 1000
 
-#define MAP_SIZE 40
-#define TILE_SIZE 20
+//#define MAP_SIZE 40
+//#define TILE_SIZE 20
 #define ENEMY_SIZE 5
 #define MAX_CLICKS 1000
 #define MAX_TOWERS 100
@@ -29,8 +29,8 @@ typedef struct{
   int range;
   int speed_damage;
   int cooldown;
-  int tir_actif ;
-  }tower;
+  int active_shoot ;
+  }Tower;
   
 typedef struct{
   int x, y ;
@@ -38,11 +38,11 @@ typedef struct{
   int speed;
   Uint32 last_move_time;
   Uint32 spawn_time;
-  }enemy;
+  }Enemy;
   
 typedef struct {
     int x1, y1, x2, y2;
     int frames_left;
-} TirEffet;
+} TirEffect;
 
 #endif
