@@ -15,6 +15,7 @@
         // Forest and Grassland biomes (greens)
         case 'g': return (SDL_Color){100, 180, 100, 255};    // Grass
         case 'f': return (SDL_Color){120, 200, 120, 255};    // Light Grass
+
         case 'a': return (SDL_Color){140, 220, 140, 255};    // Forest or grasslands
         case 'b': return (SDL_Color){130, 200, 130, 255};    // Lush grass, grassland mix
         case 'c': return (SDL_Color){160, 220, 160, 255};    // Fertile land and grass
@@ -52,12 +53,12 @@
         default: return (SDL_Color){255, 255, 255, 255};     // Fallback (white)
     }
 }
-
-void generation_map(int map[MAP_SIZE][MAP_SIZE]) {
+/*
+void generation_map(char map[MAP_SIZE][MAP_SIZE]) {
     int x = rand() % MAP_SIZE; 
 
     for (int y = 0; y < MAP_SIZE; y++) {
-        map[x][y] = 1; // Marquer chemin
+        map[x][y] = ' '; // Marquer chemin
 
         // Choisir direction aléatoire (gauche, droite ou tout droit)
         int direction = rand() % 3; // 0 = gauche, 1 = tout droit, 2 = droite
@@ -71,12 +72,17 @@ void generation_map(int map[MAP_SIZE][MAP_SIZE]) {
     }
 }
 
-void draw_map(SDL_Renderer *renderer, int map[MAP_SIZE][MAP_SIZE]) {
+
+*/
+
+/*
+void draw_map(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE]) {
+	char chara;
     for (int x = 0; x < MAP_SIZE; x++) {
         for (int y = 0; y < MAP_SIZE; y++) {
-            if (map[x][y] == 0) {
+            if (map[x][y] != ' ') {
                 SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255); // Vert pour sol
-                
+                SDL_Color get_sdl_color_for_tile(chara);
             /* AJOUTER switch case pour un caractère "a" = une couleur 
             else if(map[x][y]== "a"){
             	
@@ -84,7 +90,7 @@ void draw_map(SDL_Renderer *renderer, int map[MAP_SIZE][MAP_SIZE]) {
             */
            
             } else {
-                SDL_SetRenderDrawColor(renderer, 139, 69, 19, 255); // Marron pour chemin
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Marron pour chemin
               }
             if (y==MAP_SIZE -1 && map[x][y]==1){
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -96,8 +102,10 @@ void draw_map(SDL_Renderer *renderer, int map[MAP_SIZE][MAP_SIZE]) {
     }
 }
 
-int trouver_depart(int map[MAP_SIZE][MAP_SIZE]) {
+*/
+
+int trouver_depart(char map[MAP_SIZE][MAP_SIZE]) {
     for (int i = 0; i < MAP_SIZE; i++)
-        if (map[i][0] == 1) return i;
+        if (map[i][0] == ' ') return i;
     return -1;
 }

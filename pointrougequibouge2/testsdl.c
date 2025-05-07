@@ -7,11 +7,11 @@
 
 
 // ████████████████████████████████ MAIN ████████████████████████████████
-int main(int argc, char *argv[]) {
+int main() {
 
     // ████████████████████████████████ VARIABLES INITIALES ████████████████████████████████
     SDL_Event e;
-    int map[MAP_SIZE][MAP_SIZE];
+    char map[MAP_SIZE][MAP_SIZE];
     int click_positions[MAX_CLICKS][2];
     int click_count = 0, tower_count = 0, num_towers = 0, start = 0;
     int vie =  rand()%3 + 2, argent = 50, compteur = 0, wave = 0;

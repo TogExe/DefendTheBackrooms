@@ -7,7 +7,7 @@
 
 
 
-void deplacement_ennemi(SDL_Renderer *renderer, int map[MAP_SIZE][MAP_SIZE], int* vie, enemy* enemies, int num, tower* towers, int num_towers, int* argent) {
+void deplacement_ennemi(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE], int* vie, enemy* enemies, int num, tower* towers, int num_towers, int* argent) {
     // Vérification si l'ennemi est déjà mort
     if (enemies[num].life <= 0 || enemies[num].x < 0 || enemies[num].x >= MAP_SIZE || enemies[num].y >= MAP_SIZE){
 

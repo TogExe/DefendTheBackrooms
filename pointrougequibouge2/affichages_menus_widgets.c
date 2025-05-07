@@ -137,7 +137,7 @@ int afficher_menu_fin(SDL_Renderer *renderer, TTF_Font *font) {
 }
 
 void waiting(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, int* start, int* vie, int* argent,
-             int map[MAP_SIZE][MAP_SIZE], int click_positions[MAX_CLICKS][2], int* click_count,
+             char map[MAP_SIZE][MAP_SIZE], int click_positions[MAX_CLICKS][2], int* click_count,
              tower towers[MAX_TOWERS], int* tower_count, SDL_Texture* icon_texture) {
 
     SDL_Event event;

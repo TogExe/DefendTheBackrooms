@@ -8,9 +8,10 @@
 
 
 // Renvoie 1 si une position a été trouvée et placée dans out_x/out_y
-int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y, int map[MAP_SIZE][MAP_SIZE],
+int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y,char map[MAP_SIZE][MAP_SIZE],
                     int *out_x, int *out_y, int click_positions[MAX_CLICKS][2], int click_count, int argent){
     (void)renderer;
+    
     int tile_x = mouse_x / TILE_SIZE;
     int tile_y = mouse_y / TILE_SIZE;
     
@@ -19,15 +20,18 @@ int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y, int map[MA
     if (argent < 10){ //plus tard : towern.cost typed tower d'indice n pour savoir son coût)
       return 0;
     }
-    
-    if (tile_x < 0 || tile_x >= MAP_SIZE || tile_y < 0 || tile_y >= MAP_SIZE) {
+  	if (tile_x < 0 || tile_x >= MAP_SIZE || tile_y < 0 || tile_y >= MAP_SIZE) {
+	
+       	return 0;
+   
+    }
+    if ((map[tile_x][tile_y] >= 'a' && map[tile_x][tile_y] <= 'z') && map[tile_x][tile_y] != ' ' && map[tile_x][tile_y] != ' ') {
         return 0;
     }
+    
+		    			    			
+    
 
-    if (map[tile_x][tile_y] != 0 && map[tile_x][tile_y] != 1) {
-    return 0;
-
-    }
 
     int best_x = -1, best_y = -1;
     double min_dist = 1e9;
