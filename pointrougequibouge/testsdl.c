@@ -16,8 +16,8 @@ int main(int argc, char *argv[]) {
     int vie = 2, argent = 50;
     int tower_count = 0, num_towers = 0, start = 0;
     int compteur = 0, wave = 0, tir_count = 0;
-    enemy current_enemy = {.life = 5, .speed = 1};
-    enemy enemies[MAX_ENEMIES];
+    Enemy current_enemy = {.life = 5, .speed = 1};
+    Enemy enemies[MAX_ENEMIES];
     tower towers[MAX_TOWERS];
     tower t;
     TirEffet tirs[100];
