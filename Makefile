@@ -1,38 +1,29 @@
-# Compiler
-CC = gcc
+# Nom de l'exécutable
+TARGET = testsdl
 
-# Compiler flags
-CFLAGS = -Wall -Wextra -std=c99 `sdl2-config --cflags`
+# Fichiers sources
+SRCS = testsdl.c generation.c gestion_enemies.c gestion_tourelles.c affichages_menus_widgets.c
 
-# Linker flags for SDL2
-LDFLAGS = `sdl2-config --libs`
+# Drapeaux de compilation
+CFLAGS = -Wall -g
 
-# Source files
-SRCS = constraintBuilder.c generator.c main.c pathfinder.c
+# Bibliothèques à lier
+LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
 
-# Object files
-OBJS = $(SRCS:.c=.o)
 
-# Header files
-HDRS = constraintBuilder.h generator.h pathfinder.h
+# Compilation de l'exécutable
+$(TARGET): $(SRCS)
+	@gcc $(CFLAGS) $(SRCS) -o $(TARGET) $(LIBS)
 
-# Executable name
-TARGET = my_program
+# Nettoyage des fichiers objets et de l'exécutable
+clean:
+	@rm -f $(TARGET)
+	
+# Fonction pour lancer le programme après la compilation
+run: $(TARGET)
+	./$(TARGET)
 
-# Default target
+
+# Règle par défaut
 all: $(TARGET)
 
-# Linking the object files to create the executable
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
-
-# Rule to create object files from source files
-%.o: %.c $(HDRS)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Clean up build artifacts
-clean:
-	rm -f $(OBJS) $(TARGET)
-
-# Phony targets
-.PHONY: all clean
