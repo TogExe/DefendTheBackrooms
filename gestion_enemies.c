@@ -37,31 +37,31 @@ void deplacement_ennemi(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE], in
         int moved = 0;
 
         // Priorité au bas
-        if (y < MAP_SIZE - 1 && map[x][y + 1] == 1) {
+        if (y < MAP_SIZE - 1 && map[x][y + 1] == ' ') {
             enemies[num].y++;
             moved = 1;
             printf("Ennemi %d descend en (%d, %d)\n", num, x, y + 1);
         }
         // Diagonale droite-bas
-        else if (y < MAP_SIZE - 1 && x < MAP_SIZE - 1 && map[x + 1][y + 1] == 1) {
+        else if (y < MAP_SIZE - 1 && x < MAP_SIZE - 1 && map[x + 1][y + 1] == ' ') {
             enemies[num].x++; enemies[num].y++;
             moved = 1;
             printf("Ennemi %d descend à droite en (%d, %d)\n", num, x + 1, y + 1);
         }
         // Diagonale gauche-bas
-        else if (y < MAP_SIZE - 1 && x > 0 && map[x - 1][y + 1] == 1) {
+        else if (y < MAP_SIZE - 1 && x > 0 && map[x - 1][y + 1] == ' ') {
             enemies[num].x--; enemies[num].y++;
             moved = 1;
             printf("Ennemi %d descend à gauche en (%d, %d)\n", num, x - 1, y + 1);
         }
         // Gauche
-        else if (x > 0 && map[x - 1][y] == 1) {
+        else if (x > 0 && map[x - 1][y] == ' ') {
             enemies[num].x--;
             moved = 1;
             printf("Ennemi %d va à gauche en (%d, %d)\n", num, x - 1, y);
         }
         // Droite
-        else if (x < MAP_SIZE - 1 && map[x + 1][y] == 1) {
+        else if (x < MAP_SIZE - 1 && map[x + 1][y] == ' ') {
             enemies[num].x++;
             moved = 1;
             printf("Ennemi %d va à droite en (%d, %d)\n", num, x + 1, y);

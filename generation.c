@@ -53,7 +53,7 @@
         default: return (SDL_Color){255, 255, 255, 255};     // Fallback (white)
     }
 }
-/*
+
 void generation_map(char map[MAP_SIZE][MAP_SIZE]) {
     int x = rand() % MAP_SIZE; 
 
@@ -73,16 +73,14 @@ void generation_map(char map[MAP_SIZE][MAP_SIZE]) {
 }
 
 
-*/
 
-/*
+
 void draw_map(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE]) {
 	char chara;
     for (int x = 0; x < MAP_SIZE; x++) {
         for (int y = 0; y < MAP_SIZE; y++) {
             if (map[x][y] != ' ') {
                 SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255); // Vert pour sol
-                SDL_Color get_sdl_color_for_tile(chara);
             /* AJOUTER switch case pour un caractère "a" = une couleur 
             else if(map[x][y]== "a"){
             	
@@ -102,7 +100,6 @@ void draw_map(SDL_Renderer *renderer, char map[MAP_SIZE][MAP_SIZE]) {
     }
 }
 
-*/
 
 int trouver_depart(char map[MAP_SIZE][MAP_SIZE]) {
     for (int i = 0; i < MAP_SIZE; i++)
