@@ -1,5 +1,7 @@
+//gui.c
 #include "gui.h"
-// free
+#include <math.h>
+// === Specific procedures to free objects ===
 
 void free_box(void * object) {
     free((Box*)object);
@@ -22,6 +24,7 @@ void free_image(void * object) {
 }
 
 // === Drawing functions === //
+
 void draw_text(SDL_Renderer *renderer, Text *text) {
     if (!text || !text->font || !text->content) return;
     SDL_Surface *surface = TTF_RenderText_Blended(text->font, text->content, text->widget.color);
@@ -211,6 +214,19 @@ Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visi
     return box;
 }
 
+Box * debug_box(Text* text){
+	Box * box = malloc(sizeof(Box));
+	box -> widget.rect = text -> widget.rect;
+	box -> widget.rect.x = text -> widget.rect.x-20;
+	box -> widget.rect.y  = text -> widget.rect.y-20;
+	box	-> widget.personal_procedure=change_color_on_hover;
+	box -> widget.clicked = NULL;
+	box -> is_visible = true;
+	box -> widget.type = WIDGET_BOX;
+	box -> widget.color = (SDL_Color){100,100,100,100};
+	return box; 
+}
+
 Collider* make_collider_widget(const SDL_Rect rect, Widget *target_widget) {
     Collider *collider = malloc(sizeof(Collider));
     collider->widget.rect = rect;
@@ -280,10 +296,50 @@ void change_size_on_click(Widget *self, Context * context)
     }
 }
 
+typedef struct Context{
+	bool running;
+	bool playing;
+	bool playingis_down;
+	int time;
+	int inertia;
+}Context;
+
+void animate(Widget *self,Context*context){
+	context ->time = context->time%40;
+	if (context->time!=0){return;}
+	if (self->rect.y>self->origin.y+20){
+		context -> inertia-=1;
+	}else{
+		self->rect.x=self->origin.x+context->inertia*context->inertia/20;		
+		context -> inertia+=1;
+	}
+	printf("trying :(\n");
+	//self->rect.x =self->rect.x + context->inertia;
+	self->rect.y =self->rect.y + context->inertia;
+}
+
 
 void exit_on_click(Widget *self, Context * context) {
+	//animate(self,context);
+	if (*self->selected){
+		self->color.r =0;
+	}else{
+		self->color.r =self->default_color.r;
+	}
     if (*self->clicked) {
-        context->running=0;
+        context->running=false;
         printf("exiting...\n");
     }
+}
+
+void pause_unpause(Widget * self, Context*context){
+	change_color_on_hover(self,context);
+	if (*self ->clicked){
+		if (!context -> playingis_down){
+			context -> playing = !context -> playing;
+		}
+		context -> playingis_down = true;
+	}else {
+		context -> playingis_down =false;
+	}
 }
