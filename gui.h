@@ -23,6 +23,15 @@ typedef enum {
     WIDGET_ROOT
 } WidgetType;
 
+typedef enum {
+	START,
+	PAUSE,
+	PLAY,
+	OPTIONS,
+	GAME_OVER,
+	SOUND_SETTINGS
+}Menu;
+
 typedef struct Context Context;
 typedef struct Widget Widget;
 
@@ -41,7 +50,8 @@ typedef struct Widget {
     WidgetType type;
     void * upper_component;
     void (*deletion_procedure)(void*);
-} Widget;
+    Menu menu;
+}Widget;
 
 typedef struct Complement {
     Widget widget;
@@ -102,7 +112,7 @@ void bind_gui(const Gui *gui);
 void draw_text(SDL_Renderer *renderer, Text *text);
 void draw_box(SDL_Renderer *renderer, Box *box);
 void draw_image(SDL_Renderer *renderer, Image *image);
-void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer);
+void draw_gui_visible_components(Menu menu,const Gui *gui, SDL_Renderer *renderer);
 void update_gui(const Gui *gui, Context * context);
 
 // === Interaction and update functions === //
@@ -120,8 +130,8 @@ bool if_text_bind(void * object);
 bool if_box_bind(void * object);
 
 // === Widget creation functions === //
-Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context));
-Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context));
+Text* make_text_widget(Menu menu,const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context));
+Box * make_box_widget(Menu menu,const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context));
 Box * debug_box(Text*text);
 Collider* make_collider_widget(const SDL_Rect rect, Widget *target_widget);
 Collider* create_collider_for(Widget *target_widget);
@@ -136,4 +146,19 @@ void change_size_on_click(Widget *self, Context * context);
 void exit_on_click(Widget *self, Context * context);
 void pause_unpause(Widget* self, Context * context);
 void animate(Widget*self,Context*context);
+void wave_finished_press_for_next(Widget * self, Context * context);
+void zto(Widget * self, Context * context);
+void as_upgrade(Widget * self, Context* context);
+
+typedef struct Context{
+	bool running;
+	bool playing;
+	bool playingis_down;
+	bool as;//any selected
+	Menu menu;//menu selected for switching between gui layouts
+	int time;
+	int inertia;
+	bool start;
+}Context;
+
 #endif // GUI_H

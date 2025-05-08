@@ -10,7 +10,7 @@
 
 
 
-    SDL_Color get_sdl_color_for_tile(char tile) {
+SDL_Color get_sdl_color_for_tile(char tile) {
     switch (tile) {
         // Forest and Grassland biomes (greens)
         case 'g': return (SDL_Color){100, 180, 100, 255};    // Grass
@@ -80,19 +80,22 @@ void draw_map(SDL_Renderer *renderer, int side, int tile_size,  char map[side][s
     for (int x = 0; x < side; x++) {
         for (int y = 0; y < side; y++) {
             if (map[x][y] != ' ') {
-                SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255); // Vert pour sol
-            /* AJOUTER switch case pour un caractère "a" = une couleur 
+                SDL_Color bruh= get_sdl_color_for_tile(map[x][y]);
+                SDL_SetRenderDrawColor(renderer, bruh.r, bruh.g, bruh.b, 255);
+                                  // Vert pour sol
+            /* AJOUTER switch case pour un caractère "a" = une couleur //NUH UH ! ! ! 
             else if(map[x][y]== "a"){
             	
             	
             */
            
             } else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Marron pour chemin
+            	SDL_Color bruh= get_sdl_color_for_tile(map[x][y]);
+                SDL_SetRenderDrawColor(renderer, bruh.r, bruh.g, bruh.b, 255); // Marron pour chemin
               }
             if (y==side -1 && map[x][y]==1){
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-              }
+             }
             
             SDL_Rect rect = {x * tile_size, y * tile_size, tile_size, tile_size};
             SDL_RenderFillRect(renderer, &rect);

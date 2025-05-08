@@ -22,5 +22,5 @@ void init_constraints(ConstraintSet *set);
 
 // Converts tile character to an internal ID (e.g. 'a' = 0, 'z' = 25, 'A' = 26, ..., 'Z' = 51)
 int get_tile_id(char name);
-void convert_constraints(ConstraintSet *set, Constraint constraints[], int *constraint_count);
+void convert_constraints(Constraint constraints[], int *constraint_count);
 #endif // CONSTRAINTBUILDER_H

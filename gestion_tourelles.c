@@ -26,7 +26,9 @@ int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y,int side, c
        	return 0;
    
     }
-    if ((map[tile_x][tile_y] >= 'a' && map[tile_x][tile_y] <= 'z') && map[tile_x][tile_y] != ' ' && map[tile_x][tile_y] != ' ') {
+    //if ((map[tile_x][tile_y] >= 'a' || map[tile_x][tile_y] <= 'z') && map[tile_x][tile_y] != ' ') {
+    if (map[tile_x][tile_y] == ' ') {
+    	printf("invalid\n");
         return 0;
     }
     

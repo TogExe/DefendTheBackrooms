@@ -39,7 +39,7 @@ void draw_pixel_grid(SDL_Renderer* renderer, int width, int height, int gridSize
     }
 }
 
-
+//to move it to the new program
 
 int main(int argc, char* argv[]) {
 
@@ -50,28 +50,9 @@ int main(int argc, char* argv[]) {
 	srand(seed);
     int side = rand()% MAX_SIDE-1;
     char grid[MAX_SIDE][MAX_SIDE] = {{0}};
-    Constraint constraints[MAX_TILE_TYPES];
-    int tile_count = 0;
 	
-    ConstraintSet set;
-    init_constraints(&set);
-    convert_constraints(&set, constraints, &tile_count);
-
-    int ptgs = -1;
-    printf("entering the gen loop \n");
-    while (ptgs ==-1)
-    {
-    	printf("attempting generation \n");
-        generate_grid_with_constraints(seed,side, grid, constraints, tile_count);
-        //create_terminal_grid_buffer(grid,50,50);
-        printf("grid sucessfully generated\n");
-        ptgs = generate_organic_path(side, grid);
-        printf("path generation sucessfully attempted\n");
-        if (seed<0){
-        	seed +=1;
-        	printf("seed %d does not allow fo path generation passing to %d\n",seed-1,seed);
-		}
-    }
+	smpl_gen(seed,side,grid);
+	
 	printf("generation has officially been completed\n");
 	SDL_Init(SDL_INIT_VIDEO);
 	printf("video pass\n");

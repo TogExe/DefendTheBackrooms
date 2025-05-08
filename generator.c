@@ -1,8 +1,13 @@
 #include "headers/generator.h"
+#include "headers/constraintBuilder.h"
+#include "headers/pathfinder.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #define MAX_TILE_CHARS 52  // 26 lowercase + 26 uppercase
+
+
+
 
 // Convert tile ID (0 to 51) to character
 char tile_id_to_char(int id) {
@@ -18,7 +23,35 @@ int char_to_tile_id(char c) {
     else return -1;
 }
 
-void generate_grid_with_constraints(int seed,int side, char grid[MAX_SIDE][MAX_SIDE], Constraint constraints[], int constraint_count) {
+void smpl_gen(int seed,int side,char map[side][side]){
+	char grid[MAX_SIDE][MAX_SIDE];
+	int ptgs = -1;
+	    printf("entering the gen loop \n");
+	    while (ptgs ==-1)
+	    {
+	    	printf("attempting generation \n");
+	        generate_grid_with_constraints(seed,side, grid);
+	        //create_terminal_grid_buffer(grid,50,50);
+	        printf("grid sucessfully generated\n");
+	        ptgs = generate_organic_path(side, grid);
+	        printf("path generation sucessfully attempted\n");
+	        if (ptgs<0){
+	        	ptgs +=1;
+	        	printf("seed %d does not allow fo path generation passing to %d\n",seed-1,seed);
+		}
+	}
+	for (int i =0;i<side;i++){
+		for (int j=0;j<side;j++){
+			map[i][j]=grid[i][j];
+		}
+	}
+}
+
+void generate_grid_with_constraints(int seed,int side, char grid[MAX_SIDE][MAX_SIDE]) {
+	int constraint_count =0;
+	Constraint constraints[MAX_TILE_TYPES];
+	convert_constraints(constraints, &constraint_count);
+	
 	if (grid==NULL){
 		printf("ERROR GRID Pointer has been set to null ! ! ! You probably have no more ram :(\n ");
 	}
@@ -101,7 +134,7 @@ void generate_grid_with_constraints(int seed,int side, char grid[MAX_SIDE][MAX_S
     }
 }
 
-const char* get_color_for_tile(char tile) {
+/*const char* get_color_for_tile(char tile) {
     switch (tile) {
         case 'a': return "\033[0;32m";  // Green for 'a'
         case 'b': return "\033[0;33m";  // Yellow for 'b'
@@ -160,3 +193,4 @@ SDL_Color get_sdl_color_for_tile(char tile) {
         default: return (SDL_Color){255, 255, 255, 255};     // Fallback (white)
     }
 }
+*/

@@ -48,14 +48,15 @@ void draw_image(SDL_Renderer *renderer, Image *image) {
     SDL_RenderCopy(renderer, image->texture, NULL, &dst);
 }
 
-void draw_gui_visible_components(const Gui *gui, SDL_Renderer *renderer){
+void draw_gui_visible_components(Menu menu,const Gui *gui, SDL_Renderer *renderer){
     for (int i = 0; i < gui->widget_count; i++) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
         SDL_RenderFillRect(renderer, &(SDL_Rect){gui->w-1,gui->h-1,1,1});
         Widget *w = gui->widgets[i];
-        if (!w) continue;
-
+        if (!w || menu !=w->menu) continue;
+        
+		//if (*w->visible)continue;
         /*if (w->personal_procedure)
             w->personal_procedure(w->clicked);*/
 
@@ -151,7 +152,7 @@ void interact_gui(const Gui *gui)
 
         Collider *collider = (Collider *)w;
         if (!collider->target_widget) continue;
-
+		
         const bool in_rect = mouse_in_rect(&collider->widget.rect);
         collider->hover = in_rect;
         collider->target_widget->selected = &collider->hover;
@@ -166,7 +167,7 @@ void update_gui(const Gui *gui, Context * context)
     {
         Widget *w = gui->widgets[i];
         if (!w) continue;
-        if (w->personal_procedure)
+        if (w->personal_procedure&&context->menu==w->menu)
         {
             if (w->clicked) w->personal_procedure(w,context);
         }
@@ -190,7 +191,7 @@ bool mousedown() {
 
 // === Widget creation functions ===
 
-Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context)) {
+Text* make_text_widget(Menu menu,const SDL_Rect rect, const char *content, const SDL_Color color, TTF_Font *font, void (*personal_procedure)(Widget *self,Context * context)) {
     Text *text = malloc(sizeof(Text));
     text->widget.rect = rect;
     text->widget.personal_procedure = personal_procedure;
@@ -200,10 +201,11 @@ Text* make_text_widget(const SDL_Rect rect, const char *content, const SDL_Color
     text->content = strdup(content);
     text->font = font;
     text->size_multiplier = 1.0f;
+    text->widget.menu=menu;
     return text;
 }
 
-Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context)) {
+Box * make_box_widget(Menu menu,const SDL_Rect rect, const SDL_Color color,const bool visible, void (*personal_procedure)(Widget *self, Context * context)) {
     Box *box = malloc(sizeof(Box));
     box->widget.rect = rect;
     box->widget.personal_procedure = personal_procedure;
@@ -211,6 +213,7 @@ Box * make_box_widget(const SDL_Rect rect, const SDL_Color color,const bool visi
     box->is_visible = visible;
     box->widget.type = WIDGET_BOX;
     box->widget.color = color;
+    box->widget.menu=menu;
     return box;
 }
 
@@ -224,6 +227,7 @@ Box * debug_box(Text* text){
 	box -> is_visible = true;
 	box -> widget.type = WIDGET_BOX;
 	box -> widget.color = (SDL_Color){100,100,100,100};
+	box -> widget. menu = text -> widget.menu; 
 	return box; 
 }
 
@@ -235,12 +239,13 @@ Collider* make_collider_widget(const SDL_Rect rect, Widget *target_widget) {
         collider->widget.rect.x = collider->widget.rect.x-20;
         collider->widget.rect.y = collider->widget.rect.y-20;
     }
-    collider->widget.type = WIDGET_COLLIDER;
-    collider->widget.personal_procedure = NULL;
-    collider->widget.clicked = NULL;
-    collider->target_widget = target_widget;
-    collider->interacted_with = false;
-    collider->hover = false;
+    collider -> widget.type = WIDGET_COLLIDER;
+    collider -> widget.personal_procedure = NULL;
+    collider -> widget.clicked = NULL;
+    collider -> target_widget = target_widget;
+    collider -> interacted_with = false;
+    collider -> hover = false;
+	collider -> widget.menu = target_widget -> menu;
     return collider;
 }
 
@@ -250,8 +255,13 @@ Collider* create_collider_for(Widget *target_widget) {
 
 // === Root widget procedures ===
 
+void hide(Widget * self){
+	self-> rect.x =-1000;
+}
+
 void change_color_on_hover(Widget *self, Context * context)
-{
+{	
+	as_upgrade(self,context);
     if (*self->selected)
     {
         if ( *self->clicked)
@@ -279,6 +289,8 @@ void change_color_on_hover(Widget *self, Context * context)
 
 void change_size_on_click(Widget *self, Context * context)
 {
+	// dont mind the exotic layout i tought it looked cool
+	as_upgrade(self,context);
     if (*self->clicked)
     {
         //printf("Self got clicked yayy\n");
@@ -300,8 +312,11 @@ typedef struct Context{
 	bool running;
 	bool playing;
 	bool playingis_down;
+	bool as;
+	Menu menu;
 	int time;
 	int inertia;
+	bool start;
 }Context;
 
 void animate(Widget *self,Context*context){
@@ -318,9 +333,15 @@ void animate(Widget *self,Context*context){
 	self->rect.y =self->rect.y + context->inertia;
 }
 
+void as_upgrade(Widget*self,Context * context){
+	if (*self->selected){
+		context ->as =true;
+	}
+}
 
 void exit_on_click(Widget *self, Context * context) {
 	//animate(self,context);
+	as_upgrade(self,context);
 	if (*self->selected){
 		self->color.r =0;
 	}else{
@@ -332,8 +353,38 @@ void exit_on_click(Widget *self, Context * context) {
     }
 }
 
+
+void dummy(Widget * self, Context * context){
+	as_upgrade(self,context);
+}
+
+void wave_finished_press_for_next(Widget*self,Context*context){
+	as_upgrade(self,context);
+	if (context -> start== false){
+		change_color_on_hover(self,context);
+		if (*self ->clicked){
+			context -> start = true;
+			
+		}
+		self -> rect = self -> origin;
+	}else{
+		hide(self);
+	}
+}
+
+void zto(Widget * self, Context * context){ 
+	//ZERO to ONE reference to the old menu system
+	// where i would use int instead of enum
+	if (*self -> clicked){
+		context -> menu = PLAY; 
+	}
+}
+
 void pause_unpause(Widget * self, Context*context){
+
+	as_upgrade(self,context);
 	change_color_on_hover(self,context);
+
 	if (*self ->clicked){
 		if (!context -> playingis_down){
 			context -> playing = !context -> playing;

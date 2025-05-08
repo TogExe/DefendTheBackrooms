@@ -92,11 +92,14 @@ void init_constraints(ConstraintSet *set) {
         printf("\n");
     }*/
 }
-void convert_constraints(ConstraintSet *set, Constraint constraints[], int *constraint_count) {
+void convert_constraints(Constraint constraints[], int *constraint_count) {
+	ConstraintSet set;
+	init_constraints(&set);
+	
     *constraint_count = 0;
 
-    for (int i = 0; i < set->count; ++i) {
-        ConstraintRule *rule = &set->rules[i];
+    for (int i = 0; i < set.count; ++i) {
+        ConstraintRule *rule = &set.rules[i];
         int from_id = get_tile_id(rule->from);
         if (from_id == -1) continue; // Skip if the tile is not found
 
@@ -111,6 +114,7 @@ void convert_constraints(ConstraintSet *set, Constraint constraints[], int *cons
 
         (*constraint_count)++;
     }
+    
 
     // Debugging: Print the converted constraints
     /* printf("Converted Constraints:\n");

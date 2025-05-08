@@ -39,6 +39,7 @@ typedef struct{
 	Uint32 last_move_time;
 	Uint32 spawn_time;
 	bool isalive;
+	int l_p[2];
 }Enemy;
   
 typedef struct {

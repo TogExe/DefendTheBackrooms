@@ -2,7 +2,7 @@
 TARGET = testsdl
 
 # Fichiers sources
-SRCS = testsdl.c generation.c gestion_enemies.c gestion_tourelles.c affichages_menus_widgets.c
+SRCS = testsdl.c generation.c gestion_enemies.c gestion_tourelles.c affichages_menus_widgets.c generator.c constraintBuilder.c pathfinder.c gui.c
 
 # Drapeaux de compilation
 CFLAGS = -Wall -g

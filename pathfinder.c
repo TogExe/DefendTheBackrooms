@@ -123,7 +123,7 @@ int generate_organic_path(int side,char grid[MAX_SIDE][MAX_SIDE]) {
         int ny = came_from[x][y][1];
         x = nx; y = ny;
     }
-    grid[start.x][start.y] = 'P';
+    grid[start.x][start.y] = ' ';
 
     // Free dynamically allocated memory
     free(came_from);
