@@ -6,13 +6,22 @@
 #include "headers/generator.h"
 #include "gui.h"
 
+bool broken(int size, char map[size][size]){
+	for(int i= 0;i<size;i++){
+		for(int j=0; j<size;j++){
+			if(map[i][j]==' ')return false;
+		}
+	}
+	return true;
+}
+
 // ████████████████████████████████ MAIN ████████████████████████████████
 int main() {
 	srand(time(NULL));
     // ████████████████████████████████ VARIABLES INITIALES ████████████████████████████████
     SDL_Event e;
     
-    int side= 10+(rand()%10);
+    int side= 40+(rand()%10);
     int tile_size=40;
     
     char map[side][side];    
@@ -22,7 +31,7 @@ int main() {
     int argent = 50, compteur = 0;
     int current_enemy_count = 0;
     Enemy enemies[MAX_ENEMIES];
-    Tower towers[MAX_TOWERS];
+    Tower * towers=malloc(sizeof(Tower)*MAX_TOWERS);;
     srand(time(NULL));
 
 
@@ -98,7 +107,7 @@ int main() {
     }*/
     Mix_FreeMusic(musique1);
     Mix_PlayMusic(musique2, -1);
-
+	Mix_MasterVolume(64);
     // ████████████████████████████████ PHASE D’ATTENTE AVANT VAGUE ████████████████████████████████
     //waiting(renderer, window, font, &start, &vie, &argent,side, map,tile_size,  click_positions, &click_count, towers, &tower_count, icon_texture);
 
@@ -152,19 +161,26 @@ int main() {
 			}
 			
 			if (vie<=0){
+				tower_count = 0;
+				free(towers);
+				towers = malloc(sizeof(Tower)*MAX_TOWERS);
+				num_towers=0,
 
 				argent = 50;
 				wave = 1;
 				vie =(rand()% 8)+3;
-				smpl_gen(rand()%1000,side,map);
-
-				for (int i=0; i<side;i++){
-					for (int j=0;j<side;j++){
-						if (map[i][j]==' '){
-							grid[i][j]=' ';
+				bool broken = true;
+				while (broken){
+					smpl_gen(rand()%1000,side,map);
+					for (int i=0; i<side;i++){
+						for (int j=0;j<side;j++){
+							if (map[i][j]==' '){
+								grid[i][j]=' ';
+								broken =false;
+							}
 						}
+						printf("\n");
 					}
-					printf("\n");
 				}
 			}
 			
@@ -252,6 +268,9 @@ int main() {
 	        SDL_RenderPresent(renderer);
 	        SDL_Delay(16);
 		}
+    }
+    if(towers){
+    	free(towers);
     }
 	free_gui(&gui);
     // ████████████████████████████████ NETTOYAGE FINAL ████████████████████████████████
