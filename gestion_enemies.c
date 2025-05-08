@@ -7,8 +7,16 @@
 
 
 
-void move(SDL_Renderer *renderer,int side,int tile_size,  char map[side][side], int* vie, Enemy* enemies, int num, Tower* towers, int num_towers, int* argent) {
+void move(SDL_Renderer *renderer,int side,int tile_size,  char map[side][side], int* vie, Enemy* enemies, int num, int* argent) {
     // Vérification si l'ennemi est déjà mort
+    enemies[num].isalive=true;
+	if (enemies[num].isalive && enemies[num].life <=0){
+		printf("aaaaaaaaaaaaaaaaaaaaaa");
+		enemies[num].isalive=false; 
+		*argent+=5;
+		return;
+	}
+    
     if (enemies[num].life <= 0 || enemies[num].x < 0 || enemies[num].x >= side || enemies[num].y >= side){
 
     printf("Ennemi %d inactif ou hors carte. Aucun déplacement.\n", num);
@@ -80,6 +88,7 @@ void move(SDL_Renderer *renderer,int side,int tile_size,  char map[side][side], 
 
         enemies[num].last_move_time = now;
     }
+    
 }
 
 void init_wave(Enemy *enemies, int count, int wave, int start_x, Uint32 current_time) {
@@ -89,7 +98,8 @@ void init_wave(Enemy *enemies, int count, int wave, int start_x, Uint32 current_
             .life = 1 + wave / 2 ,
             .speed = 1,
             .last_move_time = 0,
-            .spawn_time = current_time + i * 1000
+            .spawn_time = current_time + i * 1000,
+            .isalive=true
         };
     }
 }
@@ -98,4 +108,11 @@ int all_enemies_dead(Enemy *enemies, int count) {
     for (int i = 0; i < count; i++)
         if (enemies[i].life > 0) return 0;
     return 1;
+}
+
+void move_all_enemies(SDL_Renderer *renderer,int side,int tile_size,  char map[side][side], int* vie, Enemy* enemies, int count, int* argent) {
+	for (int i = 0; i < count; i++) {
+	            if (enemies[i].life > 0)
+	                move(renderer,side, tile_size, map, vie, enemies, i, argent);
+	}
 }

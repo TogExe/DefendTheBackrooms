@@ -124,17 +124,13 @@ int main() {
         draw_hud(renderer, font, vie, argent);
 
         // ████████████████████████████████ ENNEMIS ████████████████████████████████
-        for (int i = 0; i < current_enemy_count; i++) {
-            if (enemies[i].life > 0)
-                move(renderer,side, tile_size, map,  &vie, enemies, i, towers, num_towers, &argent);
-        }
-
+        move_all_enemies(renderer,side, tile_size, map,  &vie, enemies, current_enemy_count, &argent);
         // ████████████████████████████████ TOURELLES TIRENT ████████████████████████████████
         turret(towers, tower_count, enemies, current_enemy_count, tir_son, tile_size);
 
         // ████████████████████████████████ CHECK VAGUE TERMINÉE ████████████████████████████████
         if (all_enemies_dead(enemies, current_enemy_count)) {
-            argent += 5 * current_enemy_count;
+            
             waiting(renderer, window, font, &start, &vie, &argent,side,  map, tile_size, click_positions, &click_count, towers, &tower_count, icon_texture);
             wave++;
             current_enemy_count = wave + 1;
@@ -144,22 +140,23 @@ int main() {
         }
 
         // ████████████████████████████████ ENNEMI ARRIVÉ EN BAS ████████████████████████████████
+        // ████████████████████████████████ ENNEMI ARRIVÉ EN BAS ████████████████████████████████
         for (int i = 0; i < current_enemy_count; i++) {
-            if (enemies[i].y == side - 1) {
+            if (enemies[i].y == side - 1 && enemies[i].life > 0) {
                 compteur++;
                 enemies[i].life = 0;
-                //vie--;
+                vie--;  // décrémente bien la vie du joueur ici
+                printf(">>> Ennemi %d a atteint la fin ! Vie restante du joueur : %d\n", i, vie);
+        
                 if (vie <= 0) {
-                    printf("tu es mort");
+                    printf("Tu es mort\n");
                     end_menu(renderer, font, side, tile_size);
                     running = 0;
                     break;
                 }
-                //waiting(renderer, window, font, &start, &vie, &argent, map, click_positions, &click_count, towers, &tower_count, icon_texture);
-                start_x = find_start(side, map);
-                enemies[i] = (Enemy){.x = start_x, .y = 0, .life = 10 + compteur, .speed = 1, .last_move_time = 0, .spawn_time = SDL_GetTicks()};
             }
         }
+        
 
         SDL_RenderPresent(renderer);
         SDL_Delay(16);

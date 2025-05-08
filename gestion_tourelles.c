@@ -1,4 +1,5 @@
 
+
 #include "fichier_h/gestion_tourelles.h"
 
 #include "fichier_h/gestion_enemies.h"
@@ -97,7 +98,7 @@ void turret(Tower* towers, int tower_count, Enemy* enemies, int enemy_count, Mix
         for (int j = 0; j < enemy_count; j++) {
             if (enemies[j].life <= 0)
                 continue;
-
+			
             int enemy_cx = enemies[j].x * tile_size + tile_size / 2;
             int enemy_cy = enemies[j].y * tile_size + tile_size / 2;
 
