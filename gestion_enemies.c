@@ -24,30 +24,32 @@ void move(SDL_Renderer *renderer, int side, int tile_size, char map[side][side],
     int x = enemies[num].x;
     int y = enemies[num].y;
 
-    // Draw enemy
+    // Affichage de l'ennemi
     paste_image(renderer, "assets/crabe.png", x * tile_size, y * tile_size, tile_size);
 
-    if (now - enemies[num].last_move_time > 200) {
+    if (now - enemies[num].last_move_time > 10) {
         int moved = 0;
-		//""
-        // Direction vectors for 8 directions
-        //int dx[] = {-1, -1, 0, 1, 1, 1, 0, -1};
-        //int dy[] = {0, 1, 1, 1, 0, -1, -1, -1};
-		int dx[] = { 1, 0, -1,  1,-1, 1, 0, -1};
-        int dy[] = {  1, 1,  1, 0, 0,-1,-1, -1};
-		
+
+        // Directions : priorise les mouvements vers le bas et diagonales avant les latéraux et le haut
+        int dx[] = {  0, -1,  1, -1,  1,  0, -1,  1 };
+        int dy[] = {  1,  1,  1,  0,  0, -1, -1, -1 };
+
         for (int dir = 0; dir < 8; dir++) {
-			
             int nx = x + dx[dir];
             int ny = y + dy[dir];
-            
+
             if (nx >= 0 && nx < side && ny >= 0 && ny < side &&
                 map[nx][ny] == ' ' &&
                 !(nx == enemies[num].l_p[0] && ny == enemies[num].l_p[1])) {
+
+                // Enregistrer la dernière position pour éviter de revenir en arrière
                 enemies[num].l_p[0] = x;
                 enemies[num].l_p[1] = y;
+
+                // Mettre à jour la position de l'ennemi
                 enemies[num].x = nx;
                 enemies[num].y = ny;
+
                 moved = 1;
                 break;
             }
@@ -56,15 +58,15 @@ void move(SDL_Renderer *renderer, int side, int tile_size, char map[side][side],
         if (!moved) {
             printf("Enemy %d blocked at (%d, %d)\n", num, x, y);
         }
-		
+
+        // Si l'ennemi atteint la fin (bas de la map)
         if (enemies[num].y == side - 1) {
             (*vie)--;
             enemies[num].life = 0;
             printf(">>> Enemy %d reached the end! Player life: %d\n", num, *vie);
         }
-		
-        enemies[num].last_move_time = now;
 
+        enemies[num].last_move_time = now;
     }
 }
 
@@ -75,7 +77,7 @@ void init_wave(Enemy *enemies, int count, int wave, int start_x, Uint32 current_
             .life = 1 + wave / 2 ,
             .speed = 1,
             .last_move_time = 0,
-            .spawn_time = current_time + i * 1000,
+            .spawn_time = current_time + i * (700 + rand()%1300),
             .isalive=true,
             .l_p = {0,0}
         };
