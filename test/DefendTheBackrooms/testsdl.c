@@ -156,15 +156,18 @@ int main() {
 
 				argent = 50;
 				vie =(rand()% 8)+3;
+				bool correct =false;
+				while(!correct){
 				smpl_gen(rand()%1000,side,map);
-
 				for (int i=0; i<side;i++){
 					for (int j=0;j<side;j++){
 						if (map[i][j]==' '){
 							grid[i][j]=' ';
+							correct = true;
 						}
 					}
 					printf("\n");
+				}
 				}
 			}
 			
