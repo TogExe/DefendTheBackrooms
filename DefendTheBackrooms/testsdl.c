@@ -186,13 +186,13 @@ int main() {
 			    if (e.type == SDL_KEYDOWN) {
 		        switch (e.key.keysym.sym) {
 		            case SDLK_z:
-		                printf("Espace appuyée !\n");
-		                // Ajoute ici ton action
+		                printf("touche z appuyée !\n");
+		                turret_mode=true;
 		                break;
 		
 		            case SDLK_a:
 		                printf("Touche a appuyée !\n");
-		                // Pause ou autre action
+		                turret_mode=false;
 		                break;
 		
 		            case SDLK_ESCAPE:
