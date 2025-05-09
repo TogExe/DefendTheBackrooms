@@ -30,7 +30,6 @@ typedef struct{
 	int speed_damage;
 	int cooldown;
 	int active_shoot ;
-	int level ;
 }Tower;
 
 typedef struct{
@@ -40,7 +39,7 @@ typedef struct{
 	Uint32 last_move_time;
 	Uint32 spawn_time;
 	bool isalive;
-	int l_p[2];
+	int l_p[2][2];
 }Enemy;
   
 typedef struct {
