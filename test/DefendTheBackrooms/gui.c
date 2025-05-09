@@ -307,8 +307,8 @@ void change_size_on_click(Widget *self, Context * context)
         self->rect.y = self->origin.y;
     }
 }
-
-typedef struct Context{
+/*
+typedef struct{
 	bool running;
 	bool playing;
 	bool playingis_down;
@@ -317,8 +317,9 @@ typedef struct Context{
 	int time;
 	int inertia;
 	bool start;
-}Context;
-
+}Conte
+xt;
+*/
 void animate(Widget *self,Context*context){
 	context ->time = context->time%40;
 	if (context->time!=0){return;}

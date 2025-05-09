@@ -119,3 +119,20 @@ void turret(Tower* towers, int tower_count, Enemy* enemies, int enemy_count, Mix
         }
     }
 }
+
+void upgrade(Tower* towers, int tower_count, int mouse_x, int mouse_y, int tile_size) {
+    for (int i = 0; i < tower_count; i++) {
+        int tx = towers[i].x;
+        int ty = towers[i].y;
+
+        SDL_Rect rect = { tx, ty, tile_size, tile_size };
+        if (mouse_x >= rect.x && mouse_x <= rect.x + tile_size &&
+            mouse_y >= rect.y && mouse_y <= rect.y + tile_size) {
+
+            towers[i].damage += 1;
+            towers[i].level += 1;
+            printf("Tour %d niveau %d\n", i, towers[i].level);
+            return;
+        }
+    }
+}

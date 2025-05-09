@@ -32,8 +32,21 @@ typedef enum {
 	SOUND_SETTINGS
 }Menu;
 
-typedef struct Context Context;
+
+
+//typedef struct Context;
 typedef struct Widget Widget;
+
+typedef struct {
+	bool running;
+	bool playing;
+	bool playingis_down;
+	bool as;//any selected
+	Menu menu;//menu selected for switching between gui layouts
+	int time;
+	int inertia;
+	bool start;
+}Context;
 
 bool mouse_in_rect(const SDL_Rect* rect);
 bool mousedown();
@@ -150,15 +163,6 @@ void wave_finished_press_for_next(Widget * self, Context * context);
 void zto(Widget * self, Context * context);
 void as_upgrade(Widget * self, Context* context);
 
-typedef struct Context{
-	bool running;
-	bool playing;
-	bool playingis_down;
-	bool as;//any selected
-	Menu menu;//menu selected for switching between gui layouts
-	int time;
-	int inertia;
-	bool start;
-}Context;
+
 
 #endif // GUI_H

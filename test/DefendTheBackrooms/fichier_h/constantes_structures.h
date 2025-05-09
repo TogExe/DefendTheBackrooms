@@ -30,6 +30,7 @@ typedef struct{
 	int speed_damage;
 	int cooldown;
 	int active_shoot ;
+	int level ;
 }Tower;
 
 typedef struct{

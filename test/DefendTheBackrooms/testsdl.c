@@ -24,7 +24,8 @@ int main() {
     Enemy enemies[MAX_ENEMIES];
     Tower towers[MAX_TOWERS];
     srand(time(NULL));
-
+	bool turret_mode= false;
+	
 
 	    
 
@@ -181,20 +182,22 @@ int main() {
 	        // ████████████████████████████████ ÉVÉNEMENTS UTILISATEUR ████████████████████████████████
 	        while (SDL_PollEvent(&e)) {
 	            if (e.type == SDL_QUIT) c.running = 0;
+				if (!turret_mode){
+		            if (e.type == SDL_MOUSEBUTTONDOWN&&!c.as) {
+		                int x, y, final_x, final_y;
+		                SDL_GetMouseState(&x, &y);
 
-	            if (e.type == SDL_MOUSEBUTTONDOWN&&!c.as) {
-	                int x, y, final_x, final_y;
-	                SDL_GetMouseState(&x, &y);
-
-	                if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side, grid,tile_size,  &final_x, &final_y, click_positions, click_count, argent)) {
-	                    click_positions[click_count][0] = final_x;
-	                    click_positions[click_count][1] = final_y;
-	                    click_count++;
-	                    argent -= 10;
-	                    towers[tower_count++] = (Tower){.x = final_x, .y = final_y, .damage = 1, .range = 3 * tile_size, .speed_damage = 30, .cooldown = 0};
-	                    num_towers = tower_count;
-	                }
-	            }
+		                if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side, grid,tile_size,  &final_x, &final_y, click_positions, click_count, argent)) {
+		                    click_positions[click_count][0] = final_x;
+		                    click_positions[click_count][1] = final_y;
+		                    click_count++;
+		                    argent -= 10;
+		                    towers[tower_count++] = (Tower){.x = final_x, .y = final_y, .damage = 1, .range = 3 * tile_size, .speed_damage = 30, .cooldown = 0};
+		                    num_towers = tower_count;
+		                }
+	  				}	
+	             }   
+	            
 	        }
 			
 	        // ████████████████████████████████ AFFICHAGE ████████████████████████████████
@@ -223,7 +226,7 @@ int main() {
 				
 		        // ████████████████████████████████ CHECK VAGUE TERMINÉE ████████████████████████████████
 		        if (all_enemies_dead(enemies, current_enemy_count)) {
-		            argent+=1;
+		            argent+=10;
 		            //waiting(renderer, window, font, &start, &vie, &argent,side,  map, tile_size, click_positions, &click_count, towers, &tower_count, icon_texture);
 					c.start= false;
 		            wave++;
