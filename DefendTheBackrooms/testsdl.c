@@ -183,8 +183,8 @@ int main() {
 	            if (e.type == SDL_QUIT) c.running = 0;
 
 	            if (e.type == SDL_MOUSEBUTTONDOWN&&!c.as) {
-			    if (event.type == SDL_KEYDOWN) {
-		        switch (event.key.keysym.sym) {
+			    if (e.type == SDL_KEYDOWN) {
+		        switch (e.key.keysym.sym) {
 		            case SDLK_z:
 		                printf("Espace appuyée !\n");
 		                // Ajoute ici ton action
