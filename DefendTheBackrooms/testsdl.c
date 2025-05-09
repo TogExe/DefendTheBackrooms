@@ -24,7 +24,7 @@ int main() {
     Enemy enemies[MAX_ENEMIES];
     Tower towers[MAX_TOWERS];
     srand(time(NULL));
-
+	bool turret_mode = false ;
 
 	    
 
