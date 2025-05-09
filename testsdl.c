@@ -75,8 +75,10 @@ int main() {
     // ████████████████████████████████ TEXTURES TOURELLES ████████████████████████████████
     SDL_Texture *icon_texture = charge_texture(renderer, "assets/tmonkey.png");
     SDL_Texture *icon_texture1 = charge_texture(renderer, "assets/ninja.png");
-    if (!icon_texture || !icon_texture1) return 1;
-
+	SDL_Texture *fleur = charge_texture(renderer, "assets/fleur_rose");
+	
+    if (!icon_texture || !icon_texture1 || !fleur) return -1;
+	
     // ████████████████████████████████ GÉNÉRATION MAP ████████████████████████████████
     memset(map, 0, sizeof(map));
     //generation_map(side, map);
@@ -195,7 +197,10 @@ int main() {
     		c.menu=START;
     	}
     	else if(c.menu==PLAY){
-	        // ████████████████████████████████ ÉVÉNEMENTS UTILISATEUR ████████████████████████████████
+
+	        // === Boucle jeux ===
+
+
 	        while (SDL_PollEvent(&e)) {
 	            if (e.type == SDL_QUIT) c.running = 0;
 
@@ -203,10 +208,12 @@ int main() {
 	                int x, y, final_x, final_y;
 	                SDL_GetMouseState(&x, &y);
 
-	                if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side, grid,tile_size,  &final_x, &final_y, click_positions, click_count, argent)) {
+	                if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side,grid,tile_size,  &final_x, &final_y, click_positions, click_count, argent)) {
 	                    click_positions[click_count][0] = final_x;
 	                    click_positions[click_count][1] = final_y;
 	                    click_count++;
+	                    map[x/tile_size][y/tile_size]='a';
+	                    printf("\n does this work bruh\n");
 	                    argent -= 10;
 	                    towers[tower_count++] = (Tower){.x = final_x, .y = final_y, .damage = 1, .range = 3 * tile_size, .speed_damage = 30, .cooldown = 0};
 	                    num_towers = tower_count;
@@ -214,7 +221,10 @@ int main() {
 	            }
 	        }
 			
-	        // ████████████████████████████████ AFFICHAGE ████████████████████████████████
+
+	        // === Affichage : ===
+
+	        
 	        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	        SDL_RenderClear(renderer);
 

@@ -11,6 +11,8 @@
 // Renvoie 1 si une position a été trouvée et placée dans out_x/out_y
 int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y,int side, char map[side][side], int tile_size,
                     int *out_x, int *out_y, int click_positions[MAX_CLICKS][2], int click_count, int argent){
+//int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y,int side, char **map, int tile_size,
+//                    int *out_x, int *out_y, int click_positions[MAX_CLICKS][2], int click_count, int argent){
     (void)renderer;
     
     int tile_x = mouse_x / tile_size;
@@ -34,8 +36,6 @@ int draw_click_zone(SDL_Renderer *renderer, int mouse_x, int mouse_y,int side, c
     
 		    			    			
     
-
-
     int best_x = -1, best_y = -1;
     double min_dist = 1e9;
 

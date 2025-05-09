@@ -27,8 +27,14 @@ Todo
  - [ ] micro transactions.
  - [ ] becoming rich
  
+## 
+
+we need to add 
+
+plant png for game.
 
 
+flower png for game.
 
 
-
+adding the png to the game's displaying
