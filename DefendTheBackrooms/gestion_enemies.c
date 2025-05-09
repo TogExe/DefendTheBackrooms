@@ -6,7 +6,7 @@
 #include "fichier_h/constantes_structures.h"
 
 
-
+/*
 void move(SDL_Renderer *renderer, int side, int tile_size, char map[side][side], int* vie, Enemy* enemies, int num, int* argent) {
     if (!enemies[num].isalive) return;
 
@@ -27,7 +27,7 @@ void move(SDL_Renderer *renderer, int side, int tile_size, char map[side][side],
     // Affichage de l'ennemi
     paste_image(renderer, "assets/crabe.png", x * tile_size, y * tile_size, tile_size);
 
-    if (now - enemies[num].last_move_time > 10) {
+    if (now - enemies[num].last_move_time > 5) {
         int moved = 0;
 
         // Directions : priorise les mouvements vers le bas et diagonales avant les latéraux et le haut
@@ -69,6 +69,76 @@ void move(SDL_Renderer *renderer, int side, int tile_size, char map[side][side],
         enemies[num].last_move_time = now;
     }
 }
+*/
+
+void move(SDL_Renderer *renderer, int side, int tile_size, char map[side][side],
+          int* vie, Enemy* enemies, int num, int* argent) {
+    if (!enemies[num].isalive) return;
+
+    if (enemies[num].life <= 0) {
+        enemies[num].isalive = false;
+        *argent += 1;
+        return;
+    }
+
+    if (enemies[num].x < 0 || enemies[num].x >= side || enemies[num].y >= side) return;
+
+    Uint32 now = SDL_GetTicks();
+    if (now < enemies[num].spawn_time) return;
+
+    int x = enemies[num].x;
+    int y = enemies[num].y;
+
+    paste_image(renderer, "assets/crabe.png", x * tile_size, y * tile_size, tile_size);
+
+    if (now - enemies[num].last_move_time > 5) {
+        int moved = 0;
+
+        int dx[] = {  0, -1,  1, -1,  1,  0, -1,  1 };
+        int dy[] = {  1,  1,  1,  0,  0, -1, -1, -1 };
+
+        for (int dir = 0; dir < 8; dir++) {
+            int nx = x + dx[dir];
+            int ny = y + dy[dir];
+
+            if (
+                nx >= 0 && nx < side &&
+                ny >= 0 && ny < side &&
+                map[nx][ny] == ' ' &&
+                !(nx == enemies[num].l_p[0][0] && ny == enemies[num].l_p[0][1]) &&
+                !(nx == enemies[num].l_p[1][0] && ny == enemies[num].l_p[1][1])
+            ) {
+                // Effectuer le mouvement
+                enemies[num].x = nx;
+                enemies[num].y = ny;
+
+                // Mettre à jour l'historique (après déplacement)
+                enemies[num].l_p[1][0] = enemies[num].l_p[0][0];
+                enemies[num].l_p[1][1] = enemies[num].l_p[0][1];
+
+                enemies[num].l_p[0][0] = x; // ancienne position
+                enemies[num].l_p[0][1] = y;
+
+                moved = 1;
+                break;
+            }
+        }
+
+        if (!moved) {
+            printf("Enemy %d blocked at (%d, %d)\n", num, x, y);
+        }
+
+        if (enemies[num].y == side - 1) {
+            (*vie)--;
+            enemies[num].life = 0;
+            printf(">>> Enemy %d reached the end! Player life: %d\n", num, *vie);
+        }
+
+        enemies[num].last_move_time = now;
+    }
+}
+
+
 
 void init_wave(Enemy *enemies, int count, int wave, int start_x, Uint32 current_time) {
     for (int i = 0; i < count; i++) {
@@ -77,7 +147,7 @@ void init_wave(Enemy *enemies, int count, int wave, int start_x, Uint32 current_
             .life = 1 + wave / 2 ,
             .speed = 1,
             .last_move_time = 0,
-            .spawn_time = current_time + i * (700 + rand()%1300),
+            .spawn_time = current_time + i * 1000,
             .isalive=true,
             .l_p = {0,0}
         };
