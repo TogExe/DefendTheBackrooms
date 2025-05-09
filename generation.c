@@ -37,15 +37,15 @@ SDL_Color get_sdl_color_for_tile(char tile) {
         case 's': return (SDL_Color){190, 160, 120, 255};    // Desert cliffs or rocky transition
 
         // Frozen biomes (snow, ice)
-        case 't': return (SDL_Color){190, 160, 120, 255};    // Snow and ice terrain
-        case 'u': return (SDL_Color){160, 140, 110, 255};    // Ice plains or frozen lakes
-        case 'v': return (SDL_Color){170, 190, 100, 255};    // Glacial terrain
-        case 'w': return (SDL_Color){160, 170, 90, 255};    // Snow-covered mountains
+        case 't': return (SDL_Color){210, 220, 255, 255};    // Snow and ice terrain
+        case 'u': return (SDL_Color){190, 200, 255, 255};    // Ice plains or frozen lakes
+        case 'v': return (SDL_Color){180, 190, 255, 255};    // Glacial terrain
+        case 'w': return (SDL_Color){160, 170, 255, 255};    // Snow-covered mountains
 
         // Special transitional or mixed biomes
         case 'x': return (SDL_Color){180, 160, 255, 255};    // Mixed biome, desert transitioning to frozen
-        case 'y': return (SDL_Color){170, 190, 80, 255};    // Mountainous regions with forests and snow
-        case 'z': return (SDL_Color){190, 170, 155, 255};    // Desert transition to mountains
+        case 'y': return (SDL_Color){170, 150, 255, 255};    // Mountainous regions with forests and snow
+        case 'z': return (SDL_Color){190, 170, 255, 255};    // Desert transition to mountains
 
         // Empty space (black background)
         case ' ': return (SDL_Color){0, 0, 0, 255};          // Empty space (black background)

@@ -75,7 +75,7 @@ void init_wave(Enemy *enemies, int count, int wave, int start_x, Uint32 current_
             .life = 1 + wave / 2 ,
             .speed = 1,
             .last_move_time = 0,
-            .spawn_time = current_time + i * 1500,
+            .spawn_time = current_time + i * 1000,
             .isalive=true,
             .l_p = {0,0}
         };

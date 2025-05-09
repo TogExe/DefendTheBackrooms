@@ -6,23 +6,14 @@
 #include "headers/generator.h"
 #include "gui.h"
 
-bool broken(int size, char map[size][size]){
-	for(int i= 0;i<size;i++){
-		for(int j=0; j<size;j++){
-			if(map[i][j]==' ')return false;
-		}
-	}
-	return true;
-}
-
 // ████████████████████████████████ MAIN ████████████████████████████████
 int main() {
 	srand(time(NULL));
     // ████████████████████████████████ VARIABLES INITIALES ████████████████████████████████
     SDL_Event e;
     
-    int side= 40+(rand()%10);
-    int tile_size=40;
+    int side= 10+(rand()%30);
+    int tile_size=16;
     
     char map[side][side];    
     char grid[side][side];
@@ -31,7 +22,7 @@ int main() {
     int argent = 50, compteur = 0;
     int current_enemy_count = 0;
     Enemy enemies[MAX_ENEMIES];
-    Tower * towers=malloc(sizeof(Tower)*MAX_TOWERS);;
+    Tower towers[MAX_TOWERS];
     srand(time(NULL));
 
 
@@ -75,10 +66,8 @@ int main() {
     // ████████████████████████████████ TEXTURES TOURELLES ████████████████████████████████
     SDL_Texture *icon_texture = charge_texture(renderer, "assets/tmonkey.png");
     SDL_Texture *icon_texture1 = charge_texture(renderer, "assets/ninja.png");
-	SDL_Texture *fleur = charge_texture(renderer, "assets/fleur_rose");
-	
-    if (!icon_texture || !icon_texture1 || !fleur) return -1;
-	
+    if (!icon_texture || !icon_texture1) return 1;
+
     // ████████████████████████████████ GÉNÉRATION MAP ████████████████████████████████
     memset(map, 0, sizeof(map));
     //generation_map(side, map);
@@ -109,17 +98,17 @@ int main() {
     }*/
     Mix_FreeMusic(musique1);
     Mix_PlayMusic(musique2, -1);
-	Mix_MasterVolume(64);
+
     // ████████████████████████████████ PHASE D’ATTENTE AVANT VAGUE ████████████████████████████████
     //waiting(renderer, window, font, &start, &vie, &argent,side, map,tile_size,  click_positions, &click_count, towers, &tower_count, icon_texture);
 
     // ████████████████████████████████ INITIALISATION PREMIÈRE VAGUE ████████████████████████████████
-	int vie = 10;
+	int vie = 0;
     int wave=1;
     current_enemy_count = 2;
     int start_x = find_start(side, map);
     Uint32 current_time = SDL_GetTicks();
-    init_wave(enemies, current_enemy_count, wave+1, start_x, current_time);
+    init_wave(enemies, current_enemy_count, wave, start_x, current_time);
 
     // === | Preparing for the mainloop  | ===
 	
@@ -163,26 +152,18 @@ int main() {
 			}
 			
 			if (vie<=0){
-				tower_count = 0;
-				free(towers);
-				towers = malloc(sizeof(Tower)*MAX_TOWERS);
-				num_towers=0,
 
 				argent = 50;
-				wave = 1;
 				vie =(rand()% 8)+3;
-				bool broken = true;
-				while (broken){
-					smpl_gen(rand()%1000,side,map);
-					for (int i=0; i<side;i++){
-						for (int j=0;j<side;j++){
-							if (map[i][j]==' '){
-								grid[i][j]=' ';
-								broken =false;
-							}
+				smpl_gen(rand()%1000,side,map);
+
+				for (int i=0; i<side;i++){
+					for (int j=0;j<side;j++){
+						if (map[i][j]==' '){
+							grid[i][j]=' ';
 						}
-						printf("\n");
 					}
+					printf("\n");
 				}
 			}
 			
@@ -197,10 +178,7 @@ int main() {
     		c.menu=START;
     	}
     	else if(c.menu==PLAY){
-
-	        // === Boucle jeux ===
-
-
+	        // ████████████████████████████████ ÉVÉNEMENTS UTILISATEUR ████████████████████████████████
 	        while (SDL_PollEvent(&e)) {
 	            if (e.type == SDL_QUIT) c.running = 0;
 
@@ -208,12 +186,10 @@ int main() {
 	                int x, y, final_x, final_y;
 	                SDL_GetMouseState(&x, &y);
 
-	                if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side,grid,tile_size,  &final_x, &final_y, click_positions, click_count, argent)) {
+	                if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side, grid,tile_size,  &final_x, &final_y, click_positions, click_count, argent)) {
 	                    click_positions[click_count][0] = final_x;
 	                    click_positions[click_count][1] = final_y;
 	                    click_count++;
-	                    map[x/tile_size][y/tile_size]='a';
-	                    printf("\n does this work bruh\n");
 	                    argent -= 10;
 	                    towers[tower_count++] = (Tower){.x = final_x, .y = final_y, .damage = 1, .range = 3 * tile_size, .speed_damage = 30, .cooldown = 0};
 	                    num_towers = tower_count;
@@ -221,10 +197,7 @@ int main() {
 	            }
 	        }
 			
-
-	        // === Affichage : ===
-
-	        
+	        // ████████████████████████████████ AFFICHAGE ████████████████████████████████
 	        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	        SDL_RenderClear(renderer);
 
@@ -239,11 +212,9 @@ int main() {
 	        draw_hud(renderer, font, vie, argent);
 	        update_gui(&gui,&c);
 			draw_gui_visible_components(c.menu,&gui,renderer);
-			
 			if(vie<=0){
 				c.menu = GAME_OVER;
 			}
-			
 			if (c.start){
 		        // ████████████████████████████████ ENNEMIS ████████████████████████████████
 		        move_all_enemies(renderer,side, tile_size, map,  &vie, enemies, current_enemy_count, &argent);
@@ -259,7 +230,7 @@ int main() {
 		            current_enemy_count = wave + 1;
 		            start_x = find_start(side, map);
 		            current_time = SDL_GetTicks();
-		            init_wave(enemies, current_enemy_count, wave+1, start_x, current_time);
+		            init_wave(enemies, current_enemy_count, wave, start_x, current_time);
 		        }
 
 		        // ████████████████████████████████ ENNEMI ARRIVÉ EN BAS ████████████████████████████████
@@ -271,16 +242,20 @@ int main() {
 		                c.menu = GAME_OVER;
 		                vie--;  // décrémente bien la vie du joueur ici
 		                printf(">>> Ennemi %d a atteint la fin ! Vie restante du joueur : %d\n", i, vie);
+		        
+		                if (vie <= 0) {
+		                    printf("Tu es mort\n");
+		                    end_menu(renderer, font, side, tile_size);
+		                    c.running = 0;
+		                    break;
+		                }
 		            }
 		        }
 	        }
-	        
+
 	        SDL_RenderPresent(renderer);
 	        SDL_Delay(16);
 		}
-    }
-    if(towers){
-    	free(towers);
     }
 	free_gui(&gui);
     // ████████████████████████████████ NETTOYAGE FINAL ████████████████████████████████
