@@ -46,6 +46,7 @@ typedef struct {
 	int time;
 	int inertia;
 	bool start;
+	bool turet_mode;
 }Context;
 
 bool mouse_in_rect(const SDL_Rect* rect);
@@ -162,7 +163,9 @@ void animate(Widget*self,Context*context);
 void wave_finished_press_for_next(Widget * self, Context * context);
 void zto(Widget * self, Context * context);
 void as_upgrade(Widget * self, Context* context);
-
+void upgrade_mode(Widget * self, Context * context);
+void placement_mode(Widget * self, Context * context);
+void dummy(Widget * self, Context * context);
 
 
 #endif // GUI_H

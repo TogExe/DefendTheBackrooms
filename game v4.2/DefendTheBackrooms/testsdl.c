@@ -119,7 +119,7 @@ int main() {
     Enemy * enemies=malloc(sizeof(Enemy)*MAX_ENEMIES);//[MAX_ENEMIES];
     Tower * towers = malloc(sizeof(Tower)*MAX_TOWERS);//[MAX_TOWERS];
     srand(time(NULL));
-	bool turret_mode = false ;
+	//bool turret_mode = false ;
 	
 	/*for (int i=0; i<side;i++){
 		for (int j=0;j<side;j++){
@@ -148,13 +148,19 @@ int main() {
     }
 	
     // === Initializing fonts : and renderer ===
-    TTF_Font *font = TTF_OpenFont("assets/asman.TTF", 16);
+    TTF_Font *font = TTF_OpenFont("assets/asman.TTF", 22);
     if (!font) {
         printf("Erreur police : %s\n", TTF_GetError());
         return 1;
     }
+
+    TTF_Font *t_font = TTF_OpenFont("assets/asman.TTF", 39);
+    if (!t_font) {
+        printf("Erreur police : %s\n", TTF_GetError());
+        return 1;
+    }
 	
-    SDL_Window *window = SDL_CreateWindow("Map 2D Aleatoire", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 720,512, 0);
+    SDL_Window *window = SDL_CreateWindow("Map 2D Aleatoire", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 920,512, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!window || !renderer) {
@@ -225,7 +231,8 @@ int main() {
 	c.start = false;
 	c.as = false;
 	c.menu = START;
-	
+	c.turet_mode=false;
+	//c.wave=0;
 	// === | Making the gui | ===
 
 	Gui gui = {
@@ -235,14 +242,25 @@ int main() {
 	};
 
 	// === PLAY menu widgets ===
-	Text * start_b =make_text_widget(START,(SDL_Rect){side*tile_size/2,200,140,30},"COMMENCER",(SDL_Color){255,255,255,255},font,zto); 
+
+	Text * start_b =make_text_widget(START,(SDL_Rect){136,200,310,90},"COMMENCER",(SDL_Color){255,255,255,255},t_font,zto); 
 	gui.widgets[gui.widget_count++]=(Widget*)start_b;
 	gui.widgets[gui.widget_count++]=(Widget*)create_collider_for((Widget*)start_b);
 	
-	Text * s_button = make_text_widget(PLAY,(SDL_Rect){side*tile_size/2,side*tile_size/2,140,30},"UN GROS TEXTE",(SDL_Color){255,255,255,255},font,wave_finished_press_for_next);
+	Text * s_button = make_text_widget(PLAY,(SDL_Rect){542,450,240,60},"VAGUE SUIVANTE",(SDL_Color){255,255,255,255},font,wave_finished_press_for_next);
 	//gui.widgets[gui.widget_count++]=(Widget*)debug_box(s_button);
 	gui.widgets[gui.widget_count++]=(Widget*)s_button;
 	gui.widgets[gui.widget_count++]=(Widget*)create_collider_for((Widget*)s_button);
+	gui.widgets[gui.widget_count++]=(Widget*)make_box_widget(PLAY,(SDL_Rect){512,0,20,512},(SDL_Color){4,60,80,225},true,dummy);
+
+	//adding the placement and upgrade buttons
+	Text * upp_button = make_text_widget(PLAY,(SDL_Rect){542,210,140,60}," - MODE: UPGRADE ",(SDL_Color){255,255,255,255},font,placement_mode);
+	Text * pla_button = make_text_widget(PLAY,(SDL_Rect){542,270,140,60}," - MODE: PLACEMENT ",(SDL_Color){255,255,255,255},font,upgrade_mode);
+	gui.widgets[gui.widget_count++]=(Widget*)upp_button;
+	gui.widgets[gui.widget_count++]=(Widget*)pla_button;
+	gui.widgets[gui.widget_count++]=(Widget*)create_collider_for((Widget*)upp_button);
+	gui.widgets[gui.widget_count++]=(Widget*)create_collider_for((Widget*)pla_button);
+
 	int x,y,final_x,final_y;
 	gui_init(&gui);
 
@@ -319,7 +337,7 @@ int main() {
 	        }*/
                 while (SDL_PollEvent( & e)) {
                           if (e.type == SDL_QUIT) c.running = 0;
-                          if (!turret_mode) {
+                          if (!c.turet_mode) {
                             if (e.type == SDL_MOUSEBUTTONDOWN && !c.as) {
                              
                               SDL_GetMouseState( & x, & y);
@@ -340,25 +358,25 @@ int main() {
                             switch (e.key.keysym.sym) {
                             case SDLK_z:
                               printf("touche z appuyée !\n");
-                              turret_mode = false;
+                              c.turet_mode = false;
                               break;
 
                             case SDLK_a:
                               printf("Touche a appuyée !\n");
-                              turret_mode = true;
+                              c.turet_mode = true;
                               break;
 
                             }
                           }
-                          if (turret_mode) {
+                          if (c.turet_mode) {
                 if (e.type == SDL_MOUSEBUTTONDOWN && !c.as) {
                              
                               SDL_GetMouseState( & x, & y);
-                              if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side, grid, tile_size, & final_x, & final_y, click_positions, click_count, argent)) {
+                              if (click_count < MAX_CLICKS && draw_click_zone(renderer, x, y, side, grid, tile_size, & final_x, & final_y, click_positions, click_count, argent-2)) {
                                 click_positions[click_count][0] = final_x;
                                 click_positions[click_count][1] = final_y;
-                                upgrade(towers, tower_count, final_x, final_y, tile_size);
-                                argent-=8;
+                                upgrade(towers, tower_count, final_x, final_y, tile_size,&argent);
+                                //argent-=8;
                         }
                         }
                  }
@@ -367,7 +385,7 @@ int main() {
 			
 	        // ████████████████████████████████ AFFICHAGE ████████████████████████████████
 	        //printf("e");
-	        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	        SDL_SetRenderDrawColor(renderer, 50, 90, 100, 255);
 	        SDL_RenderClear(renderer);
 
 			//printf("\t drawing map");

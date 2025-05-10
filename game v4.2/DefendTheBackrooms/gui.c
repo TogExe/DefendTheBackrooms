@@ -320,6 +320,19 @@ typedef struct{
 }Conte
 xt;
 */
+
+void advanced_interactions(Widget * self, Context * context){
+	change_color_on_hover(self,context);
+	if (*self -> selected){
+		self->rect.x= self -> origin.x+5;
+		if (*self-> clicked){
+			self->rect.y= self -> origin.y+3;	
+		}
+	}else{
+		self -> rect= self -> origin;
+	}
+}
+
 void animate(Widget *self,Context*context){
 	context ->time = context->time%40;
 	if (context->time!=0){return;}
@@ -362,12 +375,11 @@ void dummy(Widget * self, Context * context){
 void wave_finished_press_for_next(Widget*self,Context*context){
 	as_upgrade(self,context);
 	if (context -> start== false){
-		change_color_on_hover(self,context);
+		advanced_interactions(self,context);
 		if (*self ->clicked){
 			context -> start = true;
 			
 		}
-		self -> rect = self -> origin;
 	}else{
 		hide(self);
 	}
@@ -376,6 +388,7 @@ void wave_finished_press_for_next(Widget*self,Context*context){
 void zto(Widget * self, Context * context){ 
 	//ZERO to ONE reference to the old menu system
 	// where i would use int instead of enum
+	advanced_interactions(self,context);
 	if (*self -> clicked){
 		context -> menu = PLAY; 
 	}
@@ -393,5 +406,19 @@ void pause_unpause(Widget * self, Context*context){
 		context -> playingis_down = true;
 	}else {
 		context -> playingis_down =false;
+	}
+}
+
+void upgrade_mode(Widget * self, Context * context){
+	advanced_interactions(self,context);
+	if (*self->selected){
+		context -> turet_mode =false;
+	}
+}
+
+void placement_mode(Widget * self, Context * context){
+	advanced_interactions(self,context);
+	if (*self->selected){
+		context -> turet_mode =true;
 	}
 }

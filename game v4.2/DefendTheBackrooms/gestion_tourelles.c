@@ -126,7 +126,7 @@ void turret(Tower* towers, int tower_count, Enemy* enemies, int enemy_count, Mix
     }
 }
 
-void upgrade(Tower* towers, int tower_count, int mouse_x, int mouse_y, int tile_size) {
+void upgrade(Tower* towers, int tower_count, int mouse_x, int mouse_y, int tile_size, int*money) {
     for (int i = 0; i < tower_count; i++) {
         int tx = towers[i].x;
         int ty = towers[i].y;
@@ -138,6 +138,7 @@ void upgrade(Tower* towers, int tower_count, int mouse_x, int mouse_y, int tile_
             towers[i].damage += 1;
             towers[i].level += 1;
             printf("Tour %d niveau %d\n", i, towers[i].level);
+            *money-=8;
             return;
         }
     }
