@@ -7,7 +7,7 @@
 #include "gui.h"
 #include "fichier_h/save.h"
 #define SAVE "save.json"
-
+//fonction vérifiant les conditions d'initialisation proprement
 void initialize(char *** grid1, char *** map1,Tower ** towers, Enemy ** enemies,
 		 int * click_count, int * argent, int * current_enemy_count, 
 		 int * seed, int * side, int * tile_size, int * t_count){
@@ -185,6 +185,7 @@ int main() {
     current_enemy_count = 2;
     int start_x = find_start(side, map);
     Uint32 current_time = SDL_GetTicks();
+	//fonction qui gère les vagues d'ennemis (vie et nombre d'ennemis augmentés principalement)
     init_wave(enemies, current_enemy_count, wave, start_x, current_time);
 
     // === | Preparing for the mainloop  | ===
