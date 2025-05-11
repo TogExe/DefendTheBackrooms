@@ -489,13 +489,15 @@ int main() {
 			}
 			if (c.start){
 		        // ████████████████████████████████ ENNEMIS ████████████████████████████████
+				//boucle sur chaque ennemi du tableau de struct pour gerer chasue déplacement (pathfinding)
 		        move_all_enemies(renderer,side, tile_size, map,  &vie, enemies, current_enemy_count, &argent);
 		        // ████████████████████████████████ TOURELLES TIRENT ████████████████████████████████
+				//calcul de range en fonction du placement de ka tourelle et des ennemis 
 		        turret(towers, tower_count, enemies, current_enemy_count, tir_son, tile_size);
 				
 		        // ████████████████████████████████ CHECK VAGUE TERMINÉE ████████████████████████████████
 		        if (all_enemies_dead(enemies, current_enemy_count)) {
-					if (vie>=1)save(SAVE,seed,wave,vie,argent,towers,tower_count);
+					if (vie>=1)save(SAVE,seed,wave,vie,argent,towers,tower_count); //save dans un json les variables clés du programme 
 		            argent+=1;
 		            //waiting(renderer, window, font, &start, &vie, &argent,side,  map, tile_size, click_positions, &click_count, towers, &tower_count, icon_texture);
 					c.start= false;
@@ -503,6 +505,7 @@ int main() {
 		            current_enemy_count = wave + 1;
 		            start_x = find_start(side, map);
 		            current_time = SDL_GetTicks();
+				//nouvelle vague, (plus d'ennemis, plus de vie)
 		            init_wave(enemies, current_enemy_count, wave, start_x, current_time);
 		        }
 
@@ -527,6 +530,7 @@ int main() {
 		            }
 		        }
 	        }
+		//widget SDL pour affichage dynamique de l'argent et la vie
 	        draw_hud(renderer, font, vie, argent,wave);
 
 	        SDL_RenderPresent(renderer);
@@ -560,6 +564,7 @@ int main() {
 		free(towers);
 	}
     // ████████████████████████████████ NETTOYAGE FINAL ████████████████████████████████
+	//tous les free SDL nécessaires
     clean_all(renderer, window, icon_texture, icon_texture1, font, musique2, tir_son);
     return 0;
 }
