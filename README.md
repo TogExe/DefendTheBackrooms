@@ -33,7 +33,7 @@ Le projet repose sur **SDL2** et plusieurs de ses surcouches :
 sudo apt update
 sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 ```
-####Compilation
+#### Compilation
 
 assurez vous de vous situer dans le dossier de la dernière mise a jour exemple `DefendTheBackrooms/game v...`.
 
