@@ -1,6 +1,7 @@
 # 🛡️ DefendTheBackrooms
 
 **DefendTheBackrooms** est un jeu *Tower Defense* original se déroulant dans l'univers mystérieux des Backrooms (OU PAS). Placez vos tourelles (singes), gérez vos ressources, repoussez les vagues d'ennemis (crabes), et survivez le plus longtemps possible. Le jeu utilise la bibliothèque SDL2 et plusieurs de ses extensions pour proposer une expérience immersive et dynamique.
+
 ---
 
 ## 📦 Fonctionnalités
@@ -31,24 +32,23 @@ Le projet repose sur **SDL2** et plusieurs de ses surcouches :
 ```bash
 sudo apt update
 sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
-
-
-
+```
 ####Compilation
 
 compiler :
-
+```bash
 make
-
+```
 
 lancement du jeu :
-
+```bash
 make run
-
+```
 
 nettoyage :
-
+```bash
 make clean
+```
 
+#### APPRECIEZ LE JEU!!!!
 
-#####APPRECIEZ LE JEU!!!!
