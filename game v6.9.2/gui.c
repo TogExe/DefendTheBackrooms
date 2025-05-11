@@ -1,6 +1,14 @@
 //gui.c
 #include "gui.h"
 #include <math.h>
+
+
+// i thought that making interactive widgets in c with sdl took too long so i basically made this system
+//    it is overall inspired by features i could use in python. I also used some inspiration from some
+//    platforms where we code using nodes wich are interconnected. 
+//    exemple the collider is an "objec" wich is attached to a widget as a component making it interactive
+
+
 // === Specific procedures to free objects ===
 
 void free_box(void * object) {
@@ -12,6 +20,7 @@ void free_collider(void * object) {
 }
 
 void free_text(void * object) {
+	// all the other ones are useless
     Text* text = (Text*)object;
     if (text) {
         free(text->content);
@@ -20,6 +29,7 @@ void free_text(void * object) {
 }
 
 void free_image(void * object) {
+	// image widgets not ready yet
     free((Image*)object);
 }
 
@@ -49,12 +59,15 @@ void draw_image(SDL_Renderer *renderer, Image *image) {
 }
 
 void draw_gui_visible_components(Menu menu,const Gui *gui, SDL_Renderer *renderer){
+	// this checks if an elelement can be displayed and tries to display it;
     for (int i = 0; i < gui->widget_count; i++) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
         SDL_RenderFillRect(renderer, &(SDL_Rect){gui->w-1,gui->h-1,1,1});
+	    // when i was testing i saw that the window changes its bounds based what is rendered so i made this small fix
         Widget *w = gui->widgets[i];
-        if (!w || menu !=w->menu) continue;
+        if (!w || menu !=w->menu) continue; // the new system consumes more memory by keeping every items saved
+	    // the adventage is the fact that we don't need to realocate memory when switching from a menu to another
         
 		//if (*w->visible)continue;
         /*if (w->personal_procedure)
@@ -78,6 +91,7 @@ void draw_gui_visible_components(Menu menu,const Gui *gui, SDL_Renderer *rendere
 
 // === Initializing and closing ===
 
+// binding procedures usefull for when i want to free different types of widgets
 bool if_text_bind(void * object) {
     Text* text = (Text*)object;
     if (!text) return false;
@@ -102,6 +116,7 @@ bool if_collider_bind(void * object) {
     return true;
 }
 
+// binds everything together
 void bind_gui(const Gui *gui) {
     for (int i = 0; i < gui->widget_count; i++) {
         if (!if_box_bind(gui->widgets[i])){
@@ -114,6 +129,7 @@ void bind_gui(const Gui *gui) {
     }
 }
 
+//initializes the main and saves the original data
 void gui_init(const Gui *gui)
 {
     for (int i = 0; i < gui->widget_count; i++)
@@ -126,6 +142,7 @@ void gui_init(const Gui *gui)
     bind_gui(gui);
 }
 
+// uses the binding to free each 'object'
 void free_gui(const Gui *gui) {
     for (int i = 0; i < gui->widget_count; i++) {
         Widget *w = gui->widgets[i];
@@ -143,6 +160,7 @@ void free_gui(const Gui *gui) {
 
 // === Letting widgets actually do stuff ===
 
+// Used when there is a collider in a gui element
 void interact_gui(const Gui *gui)
 {
     const bool mouse_is_down = mousedown();
@@ -159,7 +177,7 @@ void interact_gui(const Gui *gui)
         collider->interacted_with = (in_rect && mouse_is_down);
         collider->target_widget->clicked = &collider->interacted_with;
     }
-}
+}// note i saw how some people code with those indents and thought it looked more refreshing (it does)
 
 void update_gui(const Gui *gui, Context * context)
 {
@@ -255,6 +273,8 @@ Collider* create_collider_for(Widget *target_widget) {
 
 // === Root widget procedures ===
 
+
+// those are the procedures you can directly implement inside of a gui element 
 void hide(Widget * self){
 	self-> rect.x =-1000;
 }
