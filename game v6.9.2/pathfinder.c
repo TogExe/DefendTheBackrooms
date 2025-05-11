@@ -32,6 +32,8 @@ static int cost(char tile, char *avoid, int avoid_count, char *prefer, int prefe
 }
 
 int generate_organic_path(int side,char grid[MAX_SIDE][MAX_SIDE]) {
+	// This function is inspired by the manhatan pathfinding algorythm.
+	// 	i chose it mostly because i liked how the paths it made looked like.
 	srand(1);
     Node start = {rand()%(side-1),0}, end = {rand()%(side-1),side-1};
 	char avoid[5] = {'w','x','e','K','J'};
