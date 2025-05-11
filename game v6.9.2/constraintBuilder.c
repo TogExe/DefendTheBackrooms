@@ -25,7 +25,7 @@ int get_tile_id(char name) {
 	    {'O', 40}, {'P', 41}, {'Q', 42}, {'R', 43}, {'S', 44},
 	    {'T', 45}, {'U', 46}, {'V', 47}, {'W', 48}, {'X', 49},
 	    {'Y', 50}
-    };
+    };// nearly made it a global statement lol 
     for (int i = 0; i < MAX_TILE_TYPES; i++) {
         if (tile_mappings[i].name == name) {
             return tile_mappings[i].id;
