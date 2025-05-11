@@ -122,7 +122,7 @@ int main() {
 	
     Mix_Music *musique1 = Mix_LoadMUS("assets/menu.mp3");
     Mix_Music *musique2 = Mix_LoadMUS("assets/Volumetric.ogg");
-    Mix_Chunk *tir_son = Mix_LoadWAV("assets/shoot.mp3");
+    Mix_Chunk *tir_son = Mix_LoadWAV("assets/shoot.wav");
 	
     if (!musique1 || !musique2 || !tir_son) {
         printf("Erreur chargement audio : %s\n", Mix_GetError());
