@@ -7,7 +7,9 @@
 #define MAX_TILE_CHARS 52  // 26 lowercase + 26 uppercase
 
 
-
+// This program is inspired by an old python program wich i made when i was trying to make a wave function collapse algorythm.
+//  and ended up with a world generation algorythm by adding heightmap layers with fractal noise and gaussian bluring the coeficient based on the tiles;
+//  overall i couldn't generate continents on this program because it would take too long for me to either make it pleasing to the eyes. Or implementing stable 2.5D;
 
 // Convert tile ID (0 to 51) to character
 char tile_id_to_char(int id) {
@@ -24,6 +26,7 @@ int char_to_tile_id(char c) {
 }
 
 void smpl_gen(int seed,int side,char ** map,char ** blocker){
+	// Made for simplifying the main
 	if (blocker ==NULL || map == NULL){
 		printf("Error : no map or grid");
 		exit(-1);
@@ -63,6 +66,10 @@ void smpl_gen(int seed,int side,char ** map,char ** blocker){
 }
 
 void generate_grid_with_constraints(int seed,int side, char grid[MAX_SIDE][MAX_SIDE]) {
+	// sIMPLE tile placement generation using wave function collapse ? or model synthesis ?
+	//   This is based on what i understood about the tile generation algorithms
+	//    "fun fact : you can actually compile some python with numba tho this is just c" 
+	
 	int constraint_count =0;
 	Constraint constraints[MAX_TILE_TYPES];
 	convert_constraints(constraints, &constraint_count);
