@@ -7,7 +7,7 @@
 
 
 
-
+//fonction qui gère le déplacement ennemi en fonction du tableau de la struc enemy et de la taille de la map
 void move(SDL_Renderer *renderer, int side, int tile_size, char ** map,
           int* vie, Enemy* enemies, int num, int* argent) {
     if (!enemies[num].isalive) return;
