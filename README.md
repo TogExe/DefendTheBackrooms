@@ -32,23 +32,23 @@ Le projet repose sur **SDL2** et plusieurs de ses surcouches :
 ```bash
 sudo apt update
 sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
-
+```
 ####Compilation
 
 compiler :
 ```bash
 make
-
+```
 
 lancement du jeu :
 ```bash
 make run
-
+```
 
 nettoyage :
 ```bash
 make clean
-
+```
 
 #####APPRECIEZ LE JEU!!!!
 
