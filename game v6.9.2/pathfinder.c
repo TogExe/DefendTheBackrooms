@@ -18,6 +18,7 @@ static int heuristic(Node a, Node b, int side) {
 }
 
 static int contains(char *list, int count, char value) {
+	//Used for finding if the tiles are good, bad, or neutral later on
     for (int i = 0; i < count; i++)
         if (list[i] == value)
             return 1;
