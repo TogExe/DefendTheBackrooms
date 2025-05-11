@@ -4,6 +4,7 @@
 
 
 
+
 typedef struct {
     char name;
     int id;
@@ -46,6 +47,7 @@ void add_rule(ConstraintSet *set, char from, char to_options[], int to_count) {
     }
 }
 
+// build a constraint set
 void init_constraints(ConstraintSet *set) {
     set->count = 0;
 
@@ -93,6 +95,8 @@ void init_constraints(ConstraintSet *set) {
         printf("\n");
     }*/
 }
+
+// converting the constraints for generator.c to be able to use them
 void convert_constraints(Constraint constraints[], int *constraint_count) {
 	ConstraintSet set;
 	init_constraints(&set);
