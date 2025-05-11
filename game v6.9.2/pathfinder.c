@@ -26,9 +26,9 @@ static int contains(char *list, int count, char value) {
 }
 
 static int cost(char tile, char *avoid, int avoid_count, char *prefer, int prefer_count, int diag) {
-    if (contains(avoid, avoid_count, tile)) return 1000000;
-    if (contains(prefer, prefer_count, tile)) return diag ? 5 : 1;
-    return diag ? 14 : 10;
+    if (contains(avoid, avoid_count, tile)) return 1000000;// making avoided tiles very costly
+    if (contains(prefer, prefer_count, tile)) return diag ? 5 : 1; // make it cost less if prefered
+    return diag ? 14 : 10; // normal price
 }
 
 int generate_organic_path(int side,char grid[MAX_SIDE][MAX_SIDE]) {
