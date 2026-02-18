@@ -84,7 +84,7 @@ int main() {
     SDL_Event e;
     
     int side= 10+(rand()%30);
-    int tile_size=500/side;
+    int tile_size=1000/side;
     
     //char map[side][side];    
     //char grid[side][side];
@@ -141,7 +141,7 @@ int main() {
         return 1;
     }
 	
-    SDL_Window *window = SDL_CreateWindow("Map 2D Aleatoire", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 920,512, 0);
+    SDL_Window *window = SDL_CreateWindow("Map 2D Aleatoire", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1840,1024, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!window || !renderer) {
